@@ -30,6 +30,22 @@
           </p>
         </div>
 
+        <div class="form-group">
+          <label for="passwordConfirm">Confirm New Password</label>
+
+          <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control"
+                 ng-model="passwordConfirm"
+                 ng-confirm-field
+                 confirm-against="user.newPassword"
+                 ng-minlength="3"
+                 required />
+          <p class="help-block"
+             ng-show="form.passwordConfirm.$error.noMatch && submitted">
+            Passwords must match.
+          </p>
+        </div>
+
+
         <p class="help-block"> {{ message }} </p>
 
         <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
