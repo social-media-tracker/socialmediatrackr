@@ -18,7 +18,8 @@ var UserSchema = new Schema({
   facebook: {},
   twitter: {},
   google: {},
-  github: {}
+  github: {},
+  subscriptions: {} // stores what emails they want to receive.
 });
 
 

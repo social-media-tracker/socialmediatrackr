@@ -10,6 +10,11 @@ angular.module 'meanApp'
       params:
         controller: 'password'
 
+    changeSubscriptions:
+      method: 'PUT'
+      params:
+        controller: 'subscriptions'
+
     get:
       method: 'GET'
       params:

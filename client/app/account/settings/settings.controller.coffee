@@ -2,7 +2,23 @@
 
 angular.module 'meanApp'
 .controller 'SettingsCtrl', ($scope, User, Auth) ->
-  $scope.errors = {}
+  $scope.error = false
+  $scope.notifications = 
+    errors: {}
+    message: ''
+    submitted: false
+  $scope.subscriptions = User.subscriptions
+
+  $scope.changeSubscriptions = (form) ->
+    $scope.notifications.submitted = true
+
+    if (form.$valid)
+      Auth.changeSubscriptions $scope.subscriptions
+      .then ->
+        $scope.notifications.message = 'Subscriptions changed.'
+      .catch ->
+        $scope.notifications.error = 'Server Error'
+
   $scope.changePassword = (form) ->
     $scope.submitted = true
 

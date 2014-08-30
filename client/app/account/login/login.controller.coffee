@@ -3,7 +3,7 @@
 angular.module 'meanApp'
 .controller 'LoginCtrl', ($scope, Auth, $location, $window) ->
   # make my life on dev easier:
-  # $scope.user = {email:'test@test.com',password:'test'}
+  $scope.user = {email:'test@test.com',password:'test'}
   $scope.errors = {}
   $scope.login = (form) ->
     $scope.submitted = true

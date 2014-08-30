@@ -2,6 +2,26 @@
 
 <div class="container">
   <div class="row">
+
+    <div class="col-sm-12">
+      <h1>Email Notifications</h1>
+      <form class="form" name="nForm" ng-submit="changeSubscriptions(nForm)" novalidate>
+        <div class="chekcbox">
+          <label>
+            <input type="checkbox" ng-model="subscriptions.activityNotification" value="1" /> Activity Notifications
+          </label>
+          <p class="help-block">
+            Send me an email every time something is added to the activity log.
+          </p>
+        </div>
+
+        <p class="help-block" ng-show="notifications.error">{{notifications.error}}</p>
+        <p class="help-block text-success" ng-show="notifications.message">{{notifications.message}}</p>
+
+        <button class="btn btn-lg btn-primary" type="submit">Save Notification Settings</button>
+      </form>
+    </div>
+
     <div class="col-sm-12">
       <h1>Change Password</h1>
     </div>
@@ -48,7 +68,7 @@
 
         <p class="help-block"> {{ message }} </p>
 
-        <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
+        <button class="btn btn-lg btn-primary" type="submit">Save New Password</button>
       </form>
     </div>
   </div>

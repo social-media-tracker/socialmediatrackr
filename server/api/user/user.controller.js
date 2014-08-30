@@ -93,6 +93,28 @@ exports.changePassword = function(req, res, next) {
   });
 };
 
+
+exports.changeSubscriptions = function(req, res, next) {
+  var userId = req.user._id;
+  var subs = req.body.subscriptions || {activityNotifications: false};
+
+  User.findById(userId, function (err, user) {
+    if (err) {
+      return res.send(500);
+    }
+    if (!user) {
+      return res.send(501);
+    }
+
+    user.subscriptions = subs;
+
+    user.save(function(err){
+      if (err) return validationError(res, err);
+      res.send(200);
+    });
+  });
+};
+
 /**
  * Get my info
  */
