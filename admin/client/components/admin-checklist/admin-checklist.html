@@ -1,0 +1,54 @@
+<h4 ng-show="loading">
+	<i class="fa fa-spinner fa-spin"></i> Loading...
+</h4>
+<div ng-hide="loading">
+
+	<p ng-hide="list.length">
+		There are no items to display.
+	</p>
+
+	<form ng-submit="addItem(newItem, userId)" ng-show="userId">
+		<div class="row-fluid">
+			<div class="col-md-9 col-sm-11">
+				<input type="text" name="task" ng-model="newItem.task" 
+				placeholder="type a task here..." class="form-control" />
+			</div>
+			<div class="col-md-3 col-sm-1">
+				<button class="btn btn-primary">
+				<i class="glyphicon glyphicon-plus"></i> Add
+				</button>
+			</div>
+		</div>
+	</form>
+	
+	<table class="table" ng-show="list.length">
+		<thead>
+			<tr>
+				<th width="50"><i class="fa fa-2x fa-square-o"></i></th>
+				<th>Item</th>
+				<th ng-hide="userId" width="150">User</th>
+				<th width="200" class="text-center">Created</th>
+				<th width="200" class="text-center">Completed</th>
+				<th width="150" class="text-center"><i class="fa fa-trash-o"></i></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="i in list | orderBy:'isDone'" ng-class="{completed:i.completedAt}">
+				<td>
+					<a href ng-click="swapCompleted(i)"><i class="fa fa-2x" ng-class="{'fa-square-o': !i.completedAt,'fa-check-square-o': i.completedAt,'fa-spin':i.loading}"></i></a>
+				</td>
+				<td>{{i.task}}</td>
+				<td ng-hide="userId"><a ui-sref="users.user({id:i.user._id})">{{i.user.name}}</a></td>
+				<td class="text-center">{{i.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
+				<td class="text-center">
+					<span ng-show="i.completedAt">{{i.completedAt | date:'MMM d, yyyy @ h:mm a'}}</span>
+					<span ng-hide="i.completedAt">-</span>
+				</td>
+				<td class="text-center"><a href ng-click="deleteItem(i)">
+					<i class="glyphicon glyphicon-trash"></i>
+				</a></td>
+			</tr>
+		</tbody>
+	</table>
+
+</div>

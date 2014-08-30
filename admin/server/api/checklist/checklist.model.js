@@ -1,0 +1,18 @@
+'use strict';
+
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    trackable = require('mongoose-trackable');
+
+var ChecklistSchema = new Schema({
+  user: {type: Number, ref: 'User'},
+  task: String,
+  completedAt: Date
+});
+ChecklistSchema.plugin(trackable);
+ChecklistSchema.virtual('isDone')
+  .get(function(){
+  	if (this.completedAt) return true;
+  	return false;
+  });
+module.exports = mongoose.model('Checklist', ChecklistSchema);

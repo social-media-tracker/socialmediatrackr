@@ -1,0 +1,27 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+<div class="container-fluid">
+
+	<div class="row">
+
+	  <div class="col-md-2">
+		  <input type="text" ng-model="userFilter.name" class="form-control" placeholder="filter users..." />
+		  <br />
+		  <!-- User List -->
+		  <ul class="list-group">
+		    <li class="list-group-item" 
+		    	ng-repeat="user in users | filter : userFilter" 
+		    	ng-class="{active: isSelected(user)}"
+		    	ng-click="selectUser(user)">
+		        <strong>{{user.name}}</strong><br>
+		        <span ng-class="{'text-muted':!isSelected(user)}">{{user.email}}</span>
+		        <!--
+		        <a ng-click="delete(user)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a>
+		        -->
+		    </li>
+		  </ul>
+	  </div>
+	  <div class="col-md-10">
+	  	<ui-view>(select a user)</ui-view>
+	  </div>
+	</div>
+</div>
