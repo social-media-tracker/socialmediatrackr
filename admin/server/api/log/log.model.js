@@ -4,7 +4,7 @@ var mongoose          = require('mongoose')
     , Schema          = mongoose.Schema
     , trackable       = require('mongoose-trackable')
     , User            = require('../user/user.model')
-    , sendmail        = require('../../../sendmail')
+    // , sendmail        = require('../../sendmail')
     ;
 
 
@@ -19,7 +19,9 @@ var LogSchema = new Schema({
 LogSchema.plugin(trackable);
 
 // email user when a new event is created
+/* EMAIL IS BROKEN NOW....
 LogSchema.post('save', function (doc) {
+
   // create our locals for the template
   var locals = {
     log: doc
@@ -34,8 +36,8 @@ LogSchema.post('save', function (doc) {
       sendmail('activity', locals, sendmail_options);
     }
   });
-console.log('%s has been saved', doc);
 });
+  */
 
 
 module.exports = mongoose.model('Log', LogSchema);
