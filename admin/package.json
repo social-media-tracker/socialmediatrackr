@@ -23,6 +23,7 @@
     "mongoose-auto-increment": "^3.0.8",
     "mongoose-trackable": "^0.2.1",
     "morgan": "~1.0.0",
+    "node-paginate-anything": "0.0.5",
     "node-sass": "^0.9.3",
     "nodemailer": "^1.2.1",
     "nodemailer-smtp-transport": "^0.1.12",

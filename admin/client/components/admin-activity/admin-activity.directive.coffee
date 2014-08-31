@@ -11,7 +11,6 @@ angular.module 'meanApp'
 
   controller: ($scope, $http, $timeout, $attrs) -> 
     # console.log $scope.user
-    $scope.logs = []
     $scope.users = []
     $scope.filter = {}
     $scope.loading = true
@@ -31,14 +30,8 @@ angular.module 'meanApp'
       $scope.$watch 'userId', (u) ->
         if u
           $scope.filter.user = u
-
-
-      $scope.$watch 'filter.user',  ->
-        $http.get '/api/logs?user=' + $scope.filter.user
-        .then (res) ->
-          $scope.logs = res.data
-          $scope.loading = false
-          # console.log res.data
+      $scope.$watch 'logs.length', (len) ->
+        $scope.loading = false
     , 250
 
 

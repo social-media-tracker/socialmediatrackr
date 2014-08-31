@@ -5,7 +5,8 @@ angular.module 'meanApp', [
   'ngResource',
   'ngSanitize',
   'ui.router',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'begriffs.paginate-anything'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider
@@ -24,7 +25,7 @@ angular.module 'meanApp', [
   # Intercept 401s and redirect you to login
   responseError: (response) ->
     if response.status is 401
-      $location.path '/login'
+      $location.path '/'
       # remove any stale tokens
       $cookieStore.remove 'token'
 
@@ -34,4 +35,4 @@ angular.module 'meanApp', [
   # Redirect to login if route requires auth and you're not logged in
   $rootScope.$on '$stateChangeStart', (event, next) ->
     Auth.isLoggedInAsync (loggedIn) ->
-      $location.path "/login" if next.authenticate and not loggedIn
+      $location.path "/" if next.authenticate and not loggedIn
