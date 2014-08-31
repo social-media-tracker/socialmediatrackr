@@ -16,7 +16,7 @@ var options = {
 	  secure: true,
 	  auth: {
 	    user: 'info@socialmediatrackr.com',
-	    password: 'k99rK20rnA'
+	    password: 'Guardme1!'
 	  },
 	  maxConnections: 5,
 	  maxMessages: 10,
