@@ -17,6 +17,7 @@ var all = {
 
   // Root path of server
   root: path.normalize(__dirname + '/../../..'),
+  email_templates: path.normalize(__dirname + '/../../../../email_templates'),
 
   // Server port
   port: process.env.PORT || 9001,
