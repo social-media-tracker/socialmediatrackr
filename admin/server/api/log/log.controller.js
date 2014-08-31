@@ -3,73 +3,36 @@
 var _ = require('lodash');
 var Log = require('./log.model');
 var moment = require('moment');
-var paginate = require('node-paginate-anything');
 
 // Get list of logs
 exports.index = function(req, res) {
-
-  var query, total_items, count_query;
-
   // admin user
   if (req.user.role === 'admin') {
-
     var q = {}
 
-    if (req.query.user && req.query.user !== "-1") {
+    if (req.query.user && req.query.user !== "0") {
       q.user = req.query.user;
     }
 
     if (q === {}) {
-      count_query = Log.count();
-      query = Log.find();
+      Log.find().sort('-createdAt').populate('user').exec(function (err, logs) {
+        if(err) { return handleError(res, err); }
+        return res.json(200, logs);
+
+      });
     } else {
-      count_query = Log.count(q);
-      query = Log.find(q);
+      Log.find(q).sort('-createdAt').populate('user').exec(function (err, logs) {
+        if(err) { return handleError(res, err); }
+        return res.json(200, logs);
+      });
     }
-    count_query.exec(function(err, total_items){
-      if (err) { return handleError(res, err); }
-      if (!total_items) { return res.json(500, {error: 'No items to display.'})}
-      console.log(total_items);
-
-      var queryParameters = paginate(req, res, total_items, 100);
-      console.log(queryParameters);
-
-      if (!queryParameters) { return res.json(500, {
-        error: 'Error Creating Query Parameters',
-        total_items: total_items
-      }); }
-
-      query.sort('-createdAt').populate('user')
-        .limit(queryParameters.limit)
-        .skip(queryParameters.skip)
-        .exec(function (err, logs) {
-          if(err) { return handleError(res, err); }
-          return res.send(200, logs);
-        });
-    })
-    
-    
 
   } else {
     // normal user
-    count_query = Log.count({user:parseInt(req.user._id)});
-    query = Log.find({user:parseInt(req.user._id)});
-    count_query.exec(function(err, total_items){
-      if (err) { return handleError(res, err); }
-      if (!total_items) { return res.json(200, {error: 'No items to display.'})}
-
-      var queryParameters = paginate(req, res, total_items, 100);
-      query.sort('-createdAt')
-        .limit(queryParameters.limit)
-        .skip(queryParameters.skip)
-        .exec(function (err, logs) {
-          if(err) { return handleError(res, err); }
-          return res.send(200, logs);
-        });
-
+    Log.find({user:parseInt(req.user._id)}).sort('-createdAt').exec(function (err, logs) {
+      if(err) { return handleError(res, err); }
+      return res.json(200, logs);
     });
-
-
   }
   
   
