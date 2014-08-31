@@ -5,7 +5,34 @@ There are 2 apps here, the "front" app for
 and the "admin" app 
 for [admin.socialmediatrackr.com](http://admin.socialmediatrackr.com)
 
-To get them setup:
+## Requirements
+
+### [Git][http://git-scm.com/downloads]
+Git is required to work with this repo.
+
+
+### NodeJS
+The app requires [Node.JS](http://nodejs.org/download/).  32 or 64 bit is fine. The app 
+is being written against version  v0.10.31.
+Linux/Mac users should use the [Node Version Manager](https://github.com/creationix/nvm) to manage
+NodeJS versions.
+
+### Node Module Dependencies
+
+Once Node is installed, open up a command prompt and type:
+
+	npm install -g grunt bower
+
+This will install Grunt and Bower globally on the machine.
+
+### MongoDB
+
+You'll need a [MongoDB](http://www.mongodb.org/downloads) server up and running locally to test.
+A default install is fine, the app will setup the DB from there.
+
+## Installation
+
+To setup the apps:
 
 	git clone git@github.com:thomporter/socialmediatrackr.git
 	cd socialmediatrackr/front
@@ -35,23 +62,3 @@ To run tests, go into one of the 2 folders and run:
 
 	grunt test:client # test the client only
 
-## Requirements
-
-### NodeJS
-The app requires [Node.JS](http://nodejs.org/download/).  32 or 64 bit is fine. The app 
-is being written against version  v0.10.31.
-Linux/Mac users should use the [Node Version Manager](https://github.com/creationix/nvm) to manage
-NodeJS versions.
-
-### Node Module Dependencies
-
-Once Node is installed, open up a command prompt and type:
-
-	npm install -g grunt bower
-
-This will install Grunt and Bower globally on the machine.
-
-### MongoDB
-
-You'll need a [MongoDB](http://www.mongodb.org/downloads) server up and running locally to test.
-A default install is fine, the app will setup the DB from there.
