@@ -7,7 +7,7 @@ for [admin.socialmediatrackr.com](http://admin.socialmediatrackr.com)
 
 ## Requirements
 
-### [Git][http://git-scm.com/downloads]
+### [Git](http://git-scm.com/downloads)
 Git is required to work with this repo.
 
 
