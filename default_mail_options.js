@@ -11,11 +11,12 @@ var options = {
 	},
 
 	smtp_options: {
-	  host: 'localhost',
-	  port: 25,
+	  host: 'server.bluby.com',
+	  port: 465,
+	  secure: true,
 	  auth: {
-	    user: 'username',
-	    password: 'password'
+	    user: 'info@socialmediatrackr.com',
+	    password: 'k99rK20rnA'
 	  },
 	  maxConnections: 5,
 	  maxMessages: 10,
