@@ -10,7 +10,7 @@ exports.index = function(req, res) {
   if (req.user.role === 'admin') {
     var q = {}
 
-    if (req.query.user && req.query.user !== "0") {
+    if (req.query.user && req.query.user !== "-1") {
       q.user = req.query.user;
     }
 
