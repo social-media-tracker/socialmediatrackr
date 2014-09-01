@@ -28,7 +28,7 @@ LogSchema.post('save', function (doc) {
   };
   // need to add user to locals
   User.findById(doc.user, function(err, user) {
-    if (!err) {
+    if (!err && user && user.subscriptions && user.subscriptions.activityNotification) {
       locals.user = user;
       var sendmail_options = {
         to: user.name + ' <' + user.email + '>',

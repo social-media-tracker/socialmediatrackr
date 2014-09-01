@@ -45,8 +45,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="l in logs |orderBy:'-createdAt'" ng-class="{active : l._id == selectedLog}">
-				<td ng-hide="false && userId"><a ui-sref="users.user({id:l.user._id})">{{l.user.name}}</a></td>
+			<tr ng-repeat="l in logs | orderBy:'-createdAt'" ng-class="{active : l._id == selectedLog}">
+				<td ng-hide="false && userId"><a ui-sref="users.user.activity({id:l.user._id})">{{l.user.name}}</a></td>
 				<td>{{l.message}}</td>
 				<td>{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
 				<td class="text-center"><a href ng-click="deleteLog(l)">
@@ -55,4 +55,12 @@
 			</tr>
 		</tbody>
 	</table>
+  <paginateit
+    collection="logs"
+    url="filter.apiURL"
+    per-page="filter.perPage"
+    auto-presets="false"
+    per-page-presets="[10,20,50,100]"
+    template-url="/assets/paginate-anything.html">
+  </paginateit>
 </div>

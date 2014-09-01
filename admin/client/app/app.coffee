@@ -6,6 +6,7 @@ angular.module 'meanApp', [
   'ngSanitize',
   'ui.router',
   'ui.bootstrap'
+  'begriffs.paginate-anything'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider

@@ -16,7 +16,7 @@ angular.module 'meanApp'
     if $scope.userId
       $scope.filter.user = $scope.userId
     else
-      $scope.filter.user = 0
+      $scope.filter.user = -1
 
     #delay setting up the watches for a short time to let the compiler fill in data
 

@@ -1,45 +1,51 @@
 'use strict'
 
-angular.module 'meanApp'
-.directive 'adminActivity', ->
-  templateUrl: 'components/admin-activity/admin-activity.html'
-  restrict: 'E'
-  scope: {
-    userId:'@',
-    dateTimeFormat: '@'
-  }
+    angular.module 'meanApp'
+    .directive 'adminActivity', ->
+      templateUrl: 'components/admin-activity/admin-activity.html'
+      restrict: 'E'
+      scope: {
+        userId:'@',
+        dateTimeFormat: '@'
+      }
 
-  controller: ($scope, $http, $timeout, $attrs) -> 
-    # console.log $scope.user
-    $scope.logs = []
-    $scope.users = []
-    $scope.filter = {}
-    $scope.loading = true
-    if $scope.userId
-      $scope.filter.user = $scope.userId
-    else
-      $scope.filter.user = -1
+      controller: ($scope, $http, $timeout, $attrs) -> 
+        console.log '$s', $scope
+        # console.log $scope.user
+        $scope.users = []
 
-    getNewLog = ->
-      d = new Date()
-      return {message:'',createdAt:d,tz_offset:d.getTimezoneOffset()}
-
-    #delay setting up the watches for a short time to let the compiler fill in data
-    $scope.newLog = getNewLog()
-    $timeout ->
-
-      $scope.$watch 'userId', (u) ->
-        if u
-          $scope.filter.user = u
+        $scope.filter = 
+          apiURL: '/api/logs?user=-1'
+          perPage: 20
+          user: $scope.userId
 
 
-      $scope.$watch 'filter.user',  ->
-        $http.get '/api/logs?user=' + $scope.filter.user
-        .then (res) ->
-          $scope.logs = res.data
-          $scope.loading = false
-          # console.log res.data
-    , 250
+        $scope.loading = true
+        if $scope.userId
+          $scope.filter.user = $scope.userId
+        else
+          $scope.filter.user = -1
+
+        getNewLog = ->
+          d = new Date()
+          return {message:'',createdAt:d,tz_offset:d.getTimezoneOffset()}
+
+        #delay setting up the watches for a short time to let the compiler fill in data
+        $scope.newLog = getNewLog()
+        $timeout ->
+
+          $scope.$watch 'userId', (u) ->
+            if u
+              $scope.filter.apiURL = '/api/logs?user=' + u
+              $scope.filter.user = u
+            else
+              $scope.filter.apiURL = '/api/logs?user=-1'
+              $scope.filter.user = -1
+
+          $scope.$watch 'logs.length', (len) ->
+            $scope.loading = false
+
+        , 25
 
 
 
