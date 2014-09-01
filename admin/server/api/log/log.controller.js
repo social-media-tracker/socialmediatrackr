@@ -27,7 +27,7 @@ exports.index = function(req, res) {
     }
     count_query.exec(function(err, total_items){
       if (err) { return handleError(res, err); }
-      if (!total_items) { return res.json(200, []])}
+      if (!total_items) { return res.json(200, [])}
       console.log(total_items);
 
       var queryParameters = paginate(req, res, total_items, 100);
@@ -53,7 +53,7 @@ exports.index = function(req, res) {
     query = Log.find({user:parseInt(req.user._id)});
     count_query.exec(function(err, total_items){
       if (err) { return handleError(res, err); }
-      if (!total_items) { return res.json(200, []])}
+      if (!total_items) { return res.json(200, [])}
 
       var queryParameters = paginate(req, res, total_items, 100);
       query.sort('-createdAt')
