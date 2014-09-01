@@ -38,7 +38,7 @@
 	<table class="table" ng-show="logs.length">
 		<thead>
 			<tr>
-				<th ng-hide="userId" width="150">User</th>
+				<th ng-hide="false && userId" width="150">User</th>
 				<th>Activity</th>
 				<th width="200">Created</th>
 				<th width="100" class="text-center">Delete</th>
@@ -46,7 +46,7 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat="l in logs |orderBy:'-createdAt'" ng-class="{active : l._id == selectedLog}">
-				<td ng-hide="userId"><a ui-sref="users.user({id:l.user._id})">{{l.user.name}}</a></td>
+				<td ng-hide="false && userId"><a ui-sref="users.user({id:l.user._id})">{{l.user.name}}</a></td>
 				<td>{{l.message}}</td>
 				<td>{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
 				<td class="text-center"><a href ng-click="deleteLog(l)">
