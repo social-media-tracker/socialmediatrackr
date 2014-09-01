@@ -38,7 +38,7 @@
 					<a href ng-click="swapCompleted(i)"><i class="fa fa-2x" ng-class="{'fa-square-o': !i.completedAt,'fa-check-square-o': i.completedAt,'fa-spin':i.loading}"></i></a>
 				</td>
 				<td>{{i.task}}</td>
-				<td ng-hide="userId"><a ui-sref="users.user({id:i.user._id})">{{i.user.name}}</a></td>
+				<td ng-hide="userId"><a ui-sref="users.user.activity({id:i.user._id})">{{i.user.name}}</a></td>
 				<td class="text-center">{{i.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
 				<td class="text-center">
 					<span ng-show="i.completedAt">{{i.completedAt | date:'MMM d, yyyy @ h:mm a'}}</span>

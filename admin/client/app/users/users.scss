@@ -2,5 +2,13 @@
 .list-group {
 	.list-group-item {
 		cursor: pointer;
+    a {
+      display: block;
+    }
+    &.active {
+      a {
+        color: white;
+      }
+    }
 	}
 }

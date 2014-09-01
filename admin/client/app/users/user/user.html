@@ -3,60 +3,16 @@
 		<h3>{{user.name}}</h3>
 
 		<ul class="nav nav-tabs">
-			<li ng-class="{active:userTab==='activity'}"><a href ng-click="userTab='activity'">Activity</a></li>
-			<li ng-class="{active:userTab==='checklist'}"><a href ng-click="userTab='checklist'">Checklist</a></li>
-			<li ng-class="{active:userTab==='edit'}"><a href ng-click="userTab='edit'">Edit User</a></li>
+			<li ng-class="{active:userTab==='activity'}"><a ui-sref="users.user.activity" ng-click="userTab='activity'">Activity</a></li>
+			<li ng-class="{active:userTab==='checklist'}"><a ui-sref="users.user.checklist"  ng-click="userTab='checklist'">Checklist</a></li>
+			<li ng-class="{active:userTab==='edit'}"><a ui-sref="users.user.edit"  ng-click="userTab='edit'">Edit User</a></li>
 		</ul>
 
 		<div class="tab-content">
-			<div class="tab-pane" ng-class="{active:userTab==='activity'}" ng-show="userTab==='activity'">
-				<h3>Activity Log</h3>
-				<admin-activity user-id="{{user._id}}"></admin-activity>
+			<div class="tab-pane active">
+				<ui-view></ui-view>
 			</div>
-			<div class="tab-pane" ng-class="{active:userTab==='checklist'}" ng-show="userTab==='checklist'">
-				<h3>Checklist</h3>
-				<admin-checklist user-id="{{user._id}}"></admin-checklist>
-
-			</div>
-			<div class="tab-pane" ng-class="{active:userTab==='edit'}" ng-show="userTab==='edit'">
-				<form role="form" ng-submit="saveUser(user)" class="form panel">
-					<p>&nbsp;</p>
-					<div class="row-fluid">
-						<div class="col-md-6">
-							<label for="name">Name</label>
-							<input class="form-control" type="text" 
-								name="name" id="name" ng-model="user.name" required />
-						</div>
-						<div class="col-md-6">
-							<label for="email">Email</label>
-							<input class="form-control" type="email" 
-								name="email" id="email" ng-model="user.email" required />
-						</div>
-					</div>
-					<p>&nbsp;</p>
-					<div class="row-fluid">
-						<div class="col-md-12"><p>Optionally change this user's password:</p></div>
-						<div class="col-md-6">
-							<label for="pword">New Password:</label>
-							<input class="form-control" type="password" 
-								name="pword" id="pword" ng-model="user.newPword" />
-						</div>
-						<div class="col-md-6">
-							<label for="pword_c">Confirm:</label>
-							<input class="form-control" type="password" name="pword_c" 
-								id="pword_c" ng-model="user.newPword_c" />
-						</div>
-					</div>
-					<p>&nbsp;</p>
-					<div class="row-fluid">
-						<div class="col-md-12 text-right">
-						<input type="submit" class="btn btn-primary" value="Save" 
-							ng-disabled="form.$invalid" />
-						</div>
-					</div>
-				</form>
-
-			</div>
+		
 
 		</div>
 	</div>

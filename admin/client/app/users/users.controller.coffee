@@ -15,7 +15,7 @@ angular.module 'meanApp'
 
   $scope.selectUser = (user) ->
   	# $rootScope.selectedUser = user._id
-  	$state.go 'users.user', id: user._id
+  	$state.go 'users.user.activity', id: user._id
 
   $scope.isSelected = (user) ->
   	user._id is $rootScope.selectedUser

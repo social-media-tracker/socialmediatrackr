@@ -1,0 +1,36 @@
+<form role="form" ng-submit="saveUser(user)" class="form panel">
+  <p>&nbsp;</p>
+  <div class="row-fluid">
+    <div class="col-md-6">
+      <label for="name">Name</label>
+      <input class="form-control" type="text" 
+        name="name" id="name" ng-model="user.name" required />
+    </div>
+    <div class="col-md-6">
+      <label for="email">Email</label>
+      <input class="form-control" type="email" 
+        name="email" id="email" ng-model="user.email" required />
+    </div>
+  </div>
+  <p>&nbsp;</p>
+  <div class="row-fluid">
+    <div class="col-md-12"><p>Optionally change this user's password:</p></div>
+    <div class="col-md-6">
+      <label for="pword">New Password:</label>
+      <input class="form-control" type="password" 
+        name="pword" id="pword" ng-model="user.newPword" />
+    </div>
+    <div class="col-md-6">
+      <label for="pword_c">Confirm:</label>
+      <input class="form-control" type="password" name="pword_c" 
+        id="pword_c" ng-model="user.newPword_c" />
+    </div>
+  </div>
+  <p>&nbsp;</p>
+  <div class="row-fluid">
+    <div class="col-md-12 text-right">
+    <input type="submit" class="btn btn-primary" value="Save" 
+      ng-disabled="form.$invalid" />
+    </div>
+  </div>
+</form>
