@@ -48,6 +48,7 @@ exports.update = function (req, res, next) {
   var update = {
     name: req.body.name,
     email: req.body.email,
+    subscriptions: req.body.subscriptions
   };
   
   User.findByIdAndUpdate(userId, update, function (err, user) {
@@ -71,15 +72,11 @@ exports.update = function (req, res, next) {
  */
 exports.show = function (req, res, next) {
   var userId = req.params.id;
-  User.findById(userId, function (err, user) {
+  User.findById(userId, '-password -salt -hashedPassword', function (err, user) {
     if (err) return next(err);
     if (!user) return res.send(401);
     if (req.user.role == 'admin') {
-      res.json({
-          _id: user._id,
-          name: user.name,
-          email: user.email
-        });
+      res.json(user);
     } else {
       res.json(user.profile)
     }

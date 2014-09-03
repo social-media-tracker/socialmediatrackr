@@ -14,7 +14,7 @@
   </div>
   <p>&nbsp;</p>
   <div class="row-fluid">
-    <div class="col-md-12"><p>Optionally change this user's password:</p></div>
+    <div class="col-md-12"><h4>Optionally change this user's password:</h4></div>
     <div class="col-md-6">
       <label for="pword">New Password:</label>
       <input class="form-control" type="password" 
@@ -26,6 +26,18 @@
         id="pword_c" ng-model="user.newPword_c" />
     </div>
   </div>
+  <p>&nbsp;</p>
+  <div class="row-fluid">
+    <div class="col-md-12"><h4>Subscriptions:</h4></div>
+    <div class="col-md-12">
+      <div class="chekcbox">
+        <label>
+          <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
+        </label>
+      </div>
+    </div>
+  </div>
+  
   <p>&nbsp;</p>
   <div class="row-fluid">
     <div class="col-md-12 text-right">

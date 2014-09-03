@@ -48,7 +48,8 @@ UserSchema
   .get(function() {
     return {
       'name': this.name,
-      'role': this.role
+      'role': this.role,
+      'subscriptions': this.subscriptions
     };
   });
 
