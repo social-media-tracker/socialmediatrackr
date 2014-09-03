@@ -5,8 +5,9 @@ angular.module 'meanApp', [
   'ngResource',
   'ngSanitize',
   'ui.router',
-  'ui.bootstrap'
-  'begriffs.paginate-anything'
+  'ui.bootstrap',
+  'begriffs.paginate-anything',
+  'angularFileUpload'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider

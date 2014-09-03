@@ -6,6 +6,7 @@
     "body-parser": "~1.0.0",
     "composable-middleware": "^0.3.0",
     "compression": "~1.0.1",
+    "connect-busboy": "0.0.1",
     "connect-mongo": "^0.4.1",
     "cookie-parser": "~1.0.1",
     "ejs": "~0.8.4",
@@ -34,6 +35,7 @@
     "passport-local": "~0.1.6",
     "passport-twitter": "latest",
     "static-favicon": "~1.0.1",
+    "string": "^1.9.1",
     "then-jade": "^2.0.0"
   },
   "devDependencies": {

@@ -5,7 +5,9 @@ var mongoose = require('mongoose'),
 
 var AttachmentSchema = new Schema({
   name: String,
-  log: {type: Schema.Types.ObjectId, ref: 'Log'}
+  log: {type: Schema.Types.ObjectId, ref: 'Log'},
+  uploadKey: String,
+  filename: String
 });
 
 module.exports = mongoose.model('Attachment', AttachmentSchema);

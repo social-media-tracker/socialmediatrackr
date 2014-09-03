@@ -9,8 +9,45 @@ angular.module 'meanApp'
     dateTimeFormat: '@'
   }
 
-  controller: ($scope, $http, $timeout, $attrs) -> 
-    console.log '$s', $scope
+  controller: ($scope, $http, $timeout, $attrs, FileUploader, Auth) -> 
+    $scope.ctrl = 
+      submittingForm: false
+      showMore: true
+
+    # when uploading files during new item submit:
+    uploadingFromSubmit = false
+
+    $scope.uploadKey = false
+    gettingUploadKey = false
+    uploader = new FileUploader 
+      url: '/api/logs/upload'
+      headers: Authorization: 'Bearer ' + Auth.getToken()
+      formData: []
+
+    uploader.onAfterAddingFile = (fileItem) ->
+      unless $scope.itemId || $scope.uploadKey || gettingUploadKey
+        gettingUploadKey = true
+        $http.get('/api/logs/uploadKey')
+        .then (res) ->
+          $scope.uploadKey = res.data.key
+          $scope.newLog.uploadKey = res.data.key
+          gettingUploadKey = false
+    
+    uploader.onBeforeUploadItem = (item) ->
+      console.log item
+      item.url = '/api/logs/upload?uploadKey=' + $scope.uploadKey
+      item
+
+    uploader.onCompleteAll = ->
+      if uploadingFromSubmit
+        uploadingFromSubmit = false
+        uploader.clearQueue()
+        $scope.uploadKey = false
+        $scope.ctrl.submittingForm = false
+        $scope.ctrl.showMore = false
+
+    $scope.uploader = uploader
+  
     # console.log $scope.user
     $scope.users = []
 
@@ -68,11 +105,22 @@ angular.module 'meanApp'
     $scope.addLog = (log, user) ->
       return alert('Enter a log message') unless log.message
       log.user = user
-      $http.post '/api/logs', log
-      .then (res) ->
-        return $scope.newLogError = res.data.error if res.data.error
-        $scope.newLogError = ''
-        
-        $scope.newLog = getNewLog()
-        $scope.logs.unshift res.data
+      doSubmit = true
+      haveUploads = uploader.getNotUploadedItems().length > 0
+      doSubmit = !haveUploads || confirm('Submit log & upload attachments?')
+      if doSubmit
+        $scope.ctrl.submittingForm = true
+        $http.post '/api/logs', log
+        .then (res) ->
+          return $scope.newLogError = res.data.error if res.data.error
+          $scope.logs.unshift res.data
+          $scope.newLogError = ''
+          if (haveUploads)
+            uploadingFromSubmit = true
+            uploader.uploadAll()
+            $scope.newLog = getNewLog()
+          else
+            $scope.ctrl.showMore = false
+          
+
 

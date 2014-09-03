@@ -4,6 +4,76 @@ var _ = require('lodash');
 var Log = require('./log.model');
 var moment = require('moment');
 var paginate = require('node-paginate-anything');
+var fs = require('fs');
+var path = require('path');
+var Attachment = require('../attachment/attachment.model');
+var S = require('string');
+
+
+function uploadAttachment(file, upload_to, filename, attachObj, res){
+  if (!fs.existsSync(upload_to)) {
+    fs.mkdirSync(upload_to);
+  }
+
+  var fstream = fs.createWriteStream(path.join(upload_to, filename));
+  file.pipe(fstream);
+  fstream.on('close', function () {
+    // file has been written, lets create the database record for it.
+    Attachment.create(attachObj, function(err, doc){
+      if (err) return res.json(200, {error: 'Unable to create attachment record in the db:'  + err.toString()});
+      res.json(200, doc);
+    });
+    res.json(200, {success:1});
+  });
+}
+
+exports.upload = function(req, res) {
+
+  req.pipe(req.busboy);
+  req.busboy.on('file', function (fieldname, file, filename) {
+    var ext = path.extname(filename);
+
+    var upload_to = res.locals.cfg.dirs.attachments;
+    var uploadType, uploadId;
+
+    var attachObj = {
+      name: S(path.basename(filename, ext)).humanize().s,
+      filename: filename,
+    };
+
+    // figure out if we're uploading to a new or existing item
+    if (req.query.log_id) {
+      // existing item
+      upload_to = path.join(upload_to, req.query.log_id);
+      console.log("Uploading " + filename + ' to ' + upload_to); 
+
+      attachObj.log = req.query.log_id;
+      uploadAttachment(file, upload_to, filename, attachObj, res);
+
+    } else if (req.query.uploadKey) {
+      // new items
+      var key = req.query.uploadKey;
+
+      // first let's check if an item w/ the upload key exists
+      Log.findOne({uploadKey:key}, function(err, doc){
+        if (doc) {
+          attachObj.log = doc._id;
+          upload_to = path.join(upload_to, doc._id.toString());
+        } else {
+          attachObj.uploadKey = key;
+          upload_to = path.join(upload_to, 'new', key);
+
+        }
+        uploadAttachment(file, upload_to, filename, attachObj, res);
+      })
+    } else {
+      return res.json(200, {error: 'Missing log_id and uploadKey, one is required.'});
+    }
+
+
+
+  });
+};
 
 // Get list of logs
 exports.index = function(req, res) {
@@ -66,10 +136,11 @@ exports.index = function(req, res) {
 
     });
   }
-  
-  
 };
 
+exports.uploadKey = function(req, res) {
+  res.json(200, {key:(new Date).getTime()});
+};
 // Get a single log
 exports.show = function(req, res) {
   Log.findById(req.params.id, function (err, log) {

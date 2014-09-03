@@ -17,6 +17,7 @@ var config = require('./environment');
 var passport = require('passport');
 var session = require('express-session');
 var mongoStore = require('connect-mongo')(session);
+var busboy = require('connect-busboy');
 
 module.exports = function(app) {
   var env = app.get('env');
@@ -30,6 +31,7 @@ module.exports = function(app) {
   app.use(methodOverride());
   app.use(cookieParser());
   app.use(passport.initialize());
+  app.use(busboy());
 
   // Persist sessions with mongoStore
   // We need to enable sessions for passport twitter because its an oauth 1.0 strategy
@@ -44,6 +46,12 @@ module.exports = function(app) {
       console.log('db connection open' );
     })
   }));
+
+  // make config.public_config avail on locals
+  app.use(function(req, res, next){
+    res.locals.cfg = config.public_config;
+    next();
+  });
 
   if ('production' === env) {
     app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));

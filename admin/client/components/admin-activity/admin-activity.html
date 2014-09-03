@@ -1,66 +1,152 @@
-<h4 ng-show="loading">
-	<i class="fa fa-spinner fa-spin"></i> Loading...
-</h4>
-<div ng-hide="loading">
+<div nv-file-drop uploader="uploader">
+  <h4 ng-show="loading">
+    <i class="fa fa-spinner fa-spin"></i> Loading...
+  </h4>
+  <div ng-hide="loading">
 
-	<p ng-hide="logs.length">
-		There are no activity logs to display.
-	</p>
-	<form ng-submit="addLog(newLog, userId)" ng-show="userId">
-		<div class="row-fluid">
-			<div class="col-md-9 col-sm-9">
-				<input type="text" name="message" ng-model="newLog.message" 
-				placeholder="type log message here..." class="form-control" />
-			</div>
-			<div class="col-md-3 col-sm-3">
-				<a href class="btn btn-info" ng-click="showMore=!showMore"><i class="fa fa-cog"></i></a>
-				<button class="btn btn-primary">
-				<i class="glyphicon glyphicon-plus"></i> Add
-				</button>
-			</div>
-		</div>
-		<div class="row-fluid form-horizontal" ng-show="showMore">
-			<div class="col-xs-12">
-				<div class="form-group">
-					<label class="col-xs-1 control-label">Date/Time:</label>
-					<div class="col-md-2">
-						<input class="form-control" type="date" ng-model="newLog.createdAt">
-					</div>
-					<div class="col-md-2">
-						<input class="form-control" type="time" ng-model="newLog.createdTime">
-					</div>
+    <p ng-hide="logs.length">
+      There are no activity logs to display.
+    </p>
+    <form ng-submit="addLog(newLog, userId)" ng-show="userId">
 
-				</div>
-				
-			</div>
-		</div>
-	</form>
-	<table class="table" ng-show="logs.length">
-		<thead>
-			<tr>
-				<th ng-hide="false && userId" width="150">User</th>
-				<th>Activity</th>
-				<th width="200">Created</th>
-				<th width="100" class="text-center">Delete</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="l in logs | orderBy:'-createdAt'" ng-class="{active : l._id == selectedLog}">
-				<td ng-hide="false && userId"><a ui-sref="users.user.activity({id:l.user._id})">{{l.user.name}}</a></td>
-				<td>{{l.message}}</td>
-				<td>{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
-				<td class="text-center"><a href ng-click="deleteLog(l)">
-					<i class="glyphicon glyphicon-trash"></i>
-				</a></td>
-			</tr>
-		</tbody>
-	</table>
-  <paginateit
-    collection="logs"
-    url="filter.apiURL"
-    per-page="filter.perPage"
-    auto-presets="false"
-    per-page-presets="[10,20,50,100]"
-    template-url="/assets/paginate-anything.html">
-  </paginateit>
+      <div class="row-fluid">
+        <div class="col-md-9 col-sm-9">
+          <input type="text" name="message" ng-model="newLog.message" 
+          placeholder="type log message here..." class="form-control" />
+        </div>
+        <div class="col-md-3 col-sm-3">
+          <a href class="btn btn-info" ng-click="ctrl.showMore = !ctrl.showMore"><i class="fa fa-cog"></i></a>
+          <button class="btn btn-primary" ng-disabled="ctrl.submittingForm">
+            <span ng-hide="ctrl.submittingForm">
+              <i class="glyphicon glyphicon-plus"></i> Add
+            </span>
+            <span ng-show="ctrl.submittingForm">
+              <i class="fa fa-spinner fa-spin"></i> ....
+            </span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="row-fluid form-horizontal" ng-show="ctrl.showMore">
+
+        <div class="col-xs-12">
+          <br />
+          <div class="form-group">
+            <label class="col-xs-1 control-label">Date/Time:</label>
+            <div class="col-md-2">
+              <input class="form-control" type="date" ng-model="newLog.createdAt">
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="time" ng-model="newLog.createdTime">
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <h4>Upload Files</h4>
+          <div ng-hide="uploader.isHTML5">HTML5 File Upload not supported by your browser.</div>
+          <div ng-show="uploader.isHTML5">
+            <div class="well file-drop-zone" nv-file-over uploader="uploader">
+              Drop files here.
+            </div>
+
+            <h3>Upload queue</h3>
+            <p>Queue length: {{ uploader.queue.length }}</p>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th width="50%">Name</th>
+                  <th ng-show="uploader.isHTML5">Size</th>
+                  <th ng-show="uploader.isHTML5">Progress</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="item in uploader.queue">
+                  <td><strong>{{ item.file.name }}</strong></td>
+                  <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                  <td ng-show="uploader.isHTML5">
+                    <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                  </td>
+                  <td nowrap>
+                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                        <span class="glyphicon glyphicon-upload"></span> Upload
+                    </button>
+                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                        <span class="glyphicon glyphicon-trash"></span> Remove
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div>
+              <div>
+                Queue progress:
+                <div class="progress" style="">
+                  <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-success btn-s" 
+                      ng-click="uploader.uploadAll()" 
+                      ng-disabled="!uploader.getNotUploadedItems().length">
+                  <span class="glyphicon glyphicon-upload"></span> Upload all
+              </button>
+              <button type="button" class="btn btn-warning btn-s" 
+                      ng-click="uploader.cancelAll()" 
+                      ng-disabled="!uploader.isUploading">
+                  <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+              </button>
+              <button type="button" class="btn btn-danger btn-s"
+                      ng-click="uploader.clearQueue()" 
+                      ng-disabled="!uploader.queue.length">
+                  <span class="glyphicon glyphicon-trash"></span> Remove all
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+    <table class="table" ng-show="logs.length">
+      <thead>
+        <tr>
+          <th ng-hide="false && userId" width="150">User</th>
+          <th>Activity</th>
+          <th width="200">Created</th>
+          <th width="100" class="text-center">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="l in logs |orderBy:'-createdAt'" ng-class="{active : l._id == selectedLog}">
+          <td ng-hide="false && userId"><a ui-sref="users.user({id:l.user._id})">{{l.user.name}}</a></td>
+          <td>{{l.message}}</td>
+          <td>{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
+          <td class="text-center"><a href ng-click="deleteLog(l)">
+            <i class="glyphicon glyphicon-trash"></i>
+          </a></td>
+        </tr>
+      </tbody>
+    </table>
+    <paginateit
+      collection="logs"
+      url="filter.apiURL"
+      per-page="filter.perPage"
+      auto-presets="false"
+      per-page-presets="[10,20,50,100]"
+      template-url="/assets/paginate-anything.html">
+    </paginateit>
+  </div>
 </div>
+newItemKey: <b>{{newItemKey}}</b>
