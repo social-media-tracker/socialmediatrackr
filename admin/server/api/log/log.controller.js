@@ -91,10 +91,18 @@ exports.create = function(req, res) {
     }
     o.createdAt = m.format();
   }
-  Log.create(o, function(err, log) {
-    if(err) { return handleError(res, err); }
-    return res.json(201, log);
-  });
+  
+
+
+  try {
+    Log.create(o, function(err, log) {
+      if(err) { return handleError(res, err); }
+      return res.json(201, log);
+    });
+  } catch(e) {
+    res.json(200,{error:e.toString()})
+  }
+
 };
 
 // Updates an existing log in the DB.

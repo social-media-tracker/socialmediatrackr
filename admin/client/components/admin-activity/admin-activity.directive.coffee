@@ -49,30 +49,30 @@ angular.module 'meanApp'
 
 
 
-$scope.deleteLog = (log) ->
-  $scope.selectedLog = log._id
-  $timeout ->
-    if confirm('Are you sure you want to delete this activity?')
-      $http.delete '/api/logs/' + log._id
-      .then (res) ->
-        return alert res.error if res.error
-        logs = []
-        for l in $scope.logs
-          logs.push l if l._id != $scope.selectedLog
-        $scope.logs = logs
-        $scope.selectedLog = false
-    else
-      $scope.selectedLog = false
-  , 100
+    $scope.deleteLog = (log) ->
+      $scope.selectedLog = log._id
+      $timeout ->
+        if confirm('Are you sure you want to delete this activity?')
+          $http.delete '/api/logs/' + log._id
+          .then (res) ->
+            return alert res.error if res.error
+            logs = []
+            for l in $scope.logs
+              logs.push l if l._id != $scope.selectedLog
+            $scope.logs = logs
+            $scope.selectedLog = false
+        else
+          $scope.selectedLog = false
+      , 100
 
-$scope.addLog = (log, user) ->
-  return alert('Enter a log message') unless log.message
-  log.user = user
-  $http.post '/api/logs', log
-  .then (res) ->
-    return $scope.newLogError = res.data.error if res.data.error
-    $scope.newLogError = ''
-    
-    $scope.newLog = getNewLog()
-    $scope.logs.unshift res.data
+    $scope.addLog = (log, user) ->
+      return alert('Enter a log message') unless log.message
+      log.user = user
+      $http.post '/api/logs', log
+      .then (res) ->
+        return $scope.newLogError = res.data.error if res.data.error
+        $scope.newLogError = ''
+        
+        $scope.newLog = getNewLog()
+        $scope.logs.unshift res.data
 

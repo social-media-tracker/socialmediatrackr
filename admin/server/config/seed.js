@@ -19,8 +19,9 @@ User.find({}).remove(function() {
     provider: 'local',
     _id: 101,
     name: 'Test User',
-    email: 'test@test.com',
-    password: 'test'
+    email: 'thomporter@gmail.com',
+    password: 'test',
+    subscriptions: { activityNotification: true }
   }, function() {
       console.log('finished populating users');
     }

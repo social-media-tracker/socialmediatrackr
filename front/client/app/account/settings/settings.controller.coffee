@@ -1,19 +1,21 @@
 'use strict'
 
 angular.module 'meanApp'
-.controller 'SettingsCtrl', ($scope, User, Auth) ->
+.controller 'SettingsCtrl', ($scope, $timeout, Auth) ->
   $scope.error = false
   $scope.notifications = 
     errors: {}
     message: ''
     submitted: false
-  $scope.subscriptions = User.subscriptions
+  $scope.user = Auth.getCurrentUser()
+  
+  # $scope.subscriptions = Auth.getCurrentUser().subscriptions
 
   $scope.changeSubscriptions = (form) ->
     $scope.notifications.submitted = true
 
     if (form.$valid)
-      Auth.changeSubscriptions $scope.subscriptions
+      Auth.changeSubscriptions $scope.user.subscriptions
       .then ->
         $scope.notifications.message = 'Subscriptions changed.'
       .catch ->
