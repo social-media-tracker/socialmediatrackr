@@ -7,7 +7,7 @@ var options = {
 	},
 
 	subjects: {
-		activity: "SocialMediaTrackr.com Activity Log Update",
+		activity: "SocialMediaTrackr.com Activity Update",
 	},
   sendmail_options: {
     path: '/usr/sbin/sendmail',
