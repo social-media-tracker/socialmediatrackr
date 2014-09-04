@@ -1,13 +1,15 @@
 'use strict'
 
 angular.module 'meanApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ui.router',
-  'ui.bootstrap',
-  'begriffs.paginate-anything',
+  'ngCookies'
+  'ngResource'
+  'ngSanitize'
+  'ui.router'
+  'ui.bootstrap'
+  'begriffs.paginate-anything'
   'angularFileUpload'
+  'xeditable'
+  'bootstrapLightbox'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider
@@ -32,7 +34,11 @@ angular.module 'meanApp', [
 
     $q.reject response
 
-.run ($rootScope, $location, Auth) ->
+.run ($rootScope, $location, Auth, editableOptions) ->
+
+  # set xeditable's theme to bootstrap 3
+  editableOptions.theme = 'bs3'
+  
   # Redirect to login if route requires auth and you're not logged in
   $rootScope.$on '$stateChangeStart', (event, next) ->
     Auth.isLoggedInAsync (loggedIn) ->

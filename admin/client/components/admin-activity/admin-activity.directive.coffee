@@ -9,16 +9,18 @@ angular.module 'meanApp'
     dateTimeFormat: '@'
   }
 
-  controller: ($scope, $http, $timeout, $attrs, FileUploader, Auth) -> 
+  controller: ($scope, $filter, $http, $timeout, $attrs, FileUploader, Auth, Lightbox) -> 
     $scope.ctrl = 
       submittingForm: false
-      showMore: true
+      showMore: false
 
     # when uploading files during new item submit:
     uploadingFromSubmit = false
+    newLogWaitingOnAttachments = false
 
     $scope.uploadKey = false
     gettingUploadKey = false
+    uploadedAttachmentIds = []
     uploader = new FileUploader 
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
@@ -38,6 +40,15 @@ angular.module 'meanApp'
       item.url = '/api/logs/upload?uploadKey=' + $scope.uploadKey
       item
 
+    uploader.onCompleteItem = (item, res) ->
+      console.log 'onCompleteItem args'
+      console.log arguments
+      console.log 'onCompleteItem res'
+      console.log res
+
+      uploadedAttachmentIds.push res._id
+
+
     uploader.onCompleteAll = ->
       if uploadingFromSubmit
         uploadingFromSubmit = false
@@ -45,8 +56,27 @@ angular.module 'meanApp'
         $scope.uploadKey = false
         $scope.ctrl.submittingForm = false
         $scope.ctrl.showMore = false
+        if newLogWaitingOnAttachments
+          newLogWaitingOnAttachments.attachmets = uploadedAttachmentIds
+          $scope.logs.push newLogWaitingOnAttachments
+          newLogWaitingOnAttachments = false
+          uploadedAttachmentIds = []
 
     $scope.uploader = uploader
+
+    instaUploader = new FileUploader 
+      url: '/api/logs/upload'
+      headers: Authorization: 'Bearer ' + Auth.getToken()
+      formData: []
+
+    instaUploader.onAfterAddingFile = (fileItem) ->
+      console.log fileItem
+      instaUploader.uploading =  true
+      instaUploader.uploadAll()
+    instaUploader.onCompleteAll = ->
+      instaUploader.uploading =  false
+
+    $scope.instaUploader = instaUploader
   
     # console.log $scope.user
     $scope.users = []
@@ -113,14 +143,68 @@ angular.module 'meanApp'
         $http.post '/api/logs', log
         .then (res) ->
           return $scope.newLogError = res.data.error if res.data.error
-          $scope.logs.unshift res.data
+          the_log = res.data
           $scope.newLogError = ''
           if (haveUploads)
             uploadingFromSubmit = true
+            newLogWaitingOnAttachments = the_log
             uploader.uploadAll()
             $scope.newLog = getNewLog()
           else
             $scope.ctrl.showMore = false
-          
+            $scope.ctrl.submittingForm = false
+            $scope.logs.push the_log
+
+    $scope.toggleAttachments = (log) ->
+      return log.showAttachments = false if (log.showAttachments) 
+      for l in $scope.logs
+        l.showAttachments = false
+      log.showAttachments = true
+      return if log.attachmentsLoaded
+      $http.get('/api/attachments/?log=' + log._id)
+      .then (res) ->
+        log.attachments = res.data
+        log.images = log.images || []
+        for a in res.data
+          if a.type == 'Image'
+              log.images.push
+                _id: a._id
+                url: '/api/attachments/' + a._id + '/passthru'
+                caption: a.name
+        log.attachmentsLoaded = true
+    
+    $scope.beforeSaveAttachmentName = (data, id) ->
+      $http.post('/api/attachments/' + id + '/updateName',{name:data})
+    $scope.beforeSaveLogMessage = (data, id) ->
+      $http.put('/api/logs/' + id, {message: data})
+    
+    $scope.deleteAttachment = (a, log) ->
+      
+      $scope.deletingAttachment = a._id
+      $timeout ->
+
+        if !confirm('Are you sure you want to delete this attachment?')
+          $scope.deletingAttachment = false
+          return
+        $http.delete('/api/attachments/' + a._id)
+        .then (res) ->
+          aa = []
+          for x in log.attachments
+            aa.push x unless x._id == a._id
+          log.attachments = aa
+      , 25
+
+    findAttachmentIndex = (attachment, log) ->
+      maxi = log.attachments.length
+      for i in [0..maxi]
+        console.log i
+        return i if log.attachments[i]._id == attachment._id
+      return -1
+
+    $scope.showAttachmentImage = (attachment, log) ->
+      # find the index
+      idx = findAttachmentIndex(attachment, log)
+      Lightbox.openModal(log.images, idx)
 
 
+      

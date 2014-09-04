@@ -8,6 +8,8 @@ var mongoose          = require('mongoose')
     , sendmail        = require('../../sendmail')
     , path            = require('path')
     , fs              = require('fs')
+    , ObjectId        = mongoose.Schema.Types.ObjectId
+    , ATTACH_DIR      = path.normalize(path.join(__dirname, '../../../../attachments'))
     ;
 
 
@@ -16,17 +18,27 @@ var LogSchema = new Schema({
   user: {type: Number, ref: 'User'},
   checklist: {type: Schema.Types.ObjectId, ref: 'Checklist', required: false},
   uploadKey: String,
+  attachments:[{type: ObjectId, ref: 'Attachment'}]
 });
 
 
 LogSchema.plugin(trackable);
 
+LogSchema
+  .virtual('attachments_dir')
+  .get(function(){
+    return path.join(ATTACH_DIR, this._id.toString());
+  });
+
+// find any attachments uploaded before the doc was saved and associate them to the log.
 LogSchema.post('save', function (doc) {
 
   // check for attachments that might exist for this log
   if (doc.uploadKey) {
-    Attachment.find({uploadKey:doc.uploadKey}, function(err, attachments) {
-      if (attachments) {
+    Attachment.find({uploadKey:doc.uploadKey,log:null}, function(err, attachments) {
+      if (attachments && attachments.length) {
+        console.log(attachments.length + ' attachments found');
+
         for (var i in attachments) {
           var a = attachments[i];
           var attach_dir = path.normalize(path.join(__dirname, '../../../../attachments'))
@@ -37,10 +49,12 @@ LogSchema.post('save', function (doc) {
             fs.mkdirSync(move_to_folder);
           }
           fs.renameSync(move_from, move_to);
+          doc.attachments.push(a._id);
         }
 
         // update the attachment records in the db
         Attachment.update({uploadKey:doc.uploadKey}, {$set:{log:doc._id}}, function(err){
+        doc.save();
           // not much we can do about errors, need to enable a logger to log them.
         })
       }
@@ -50,7 +64,6 @@ LogSchema.post('save', function (doc) {
 });
 
 // email user when a new event is created
-//* EMAIL IS BROKEN NOW....
 LogSchema.post('save', function (doc) {
   // create our locals for the template
   var locals = {
@@ -70,8 +83,41 @@ LogSchema.post('save', function (doc) {
     }
   });
 });
-//*/
 
+// delete any attachments when a log gets deleted
+LogSchema.pre('remove', function (next) {
+  var log = this;
+  Attachment.find({log:this._id}, function(err, attachments){
+    if (err) return next(err);
+    if (!attachments.length) return next();
+
+    console.log('Found %d attachments to delete', attachments.length);
+    var count = 0;
+    var removeListener = function(err) {
+      console.log('attachment #%d has been removed.', count);
+      if (err) return next(err);
+      if (++count >= attachments.length) {
+        console.log('All attachments deleted, calling next()');
+        // remove our attachment folder
+        fs.rmdir(log.attachments_dir, next);
+        
+      } else {
+        console.log('Moving on to next attachment...');
+        nextAttachment();
+      }
+
+    }
+
+    var nextAttachment = function() {
+      console.log('Removing attachment #' + count);
+      attachments[count].remove(removeListener);
+    }
+
+    nextAttachment();
+
+  });
+
+});
 
 module.exports = mongoose.model('Log', LogSchema);
 

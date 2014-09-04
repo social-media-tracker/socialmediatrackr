@@ -10,7 +10,7 @@ var Attachment = require('../attachment/attachment.model');
 var S = require('string');
 
 
-function uploadAttachment(file, upload_to, filename, attachObj, res){
+function uploadAttachment(file, upload_to, filename, attachObj, res, log){
   if (!fs.existsSync(upload_to)) {
     fs.mkdirSync(upload_to);
   }
@@ -21,9 +21,18 @@ function uploadAttachment(file, upload_to, filename, attachObj, res){
     // file has been written, lets create the database record for it.
     Attachment.create(attachObj, function(err, doc){
       if (err) return res.json(200, {error: 'Unable to create attachment record in the db:'  + err.toString()});
-      res.json(200, doc);
+      if (log) {
+        log.attachments = log.attachments || [];
+        log.attachments.push(doc._id)
+        log.save(function(){
+          res.json(200, doc);
+        });
+
+      } else {
+        res.json(200, doc);
+      }
+
     });
-    res.json(200, {success:1});
   });
 }
 
@@ -42,12 +51,12 @@ exports.upload = function(req, res) {
     };
 
     // figure out if we're uploading to a new or existing item
-    if (req.query.log_id) {
+    if (req.params.id) {
       // existing item
-      upload_to = path.join(upload_to, req.query.log_id);
+      upload_to = path.join(upload_to, req.params.id);
       console.log("Uploading " + filename + ' to ' + upload_to); 
 
-      attachObj.log = req.query.log_id;
+      attachObj.log = req.params.id;
       uploadAttachment(file, upload_to, filename, attachObj, res);
 
     } else if (req.query.uploadKey) {
@@ -64,7 +73,7 @@ exports.upload = function(req, res) {
           upload_to = path.join(upload_to, 'new', key);
 
         }
-        uploadAttachment(file, upload_to, filename, attachObj, res);
+        uploadAttachment(file, upload_to, filename, attachObj, res, doc);
       })
     } else {
       return res.json(200, {error: 'Missing log_id and uploadKey, one is required.'});
