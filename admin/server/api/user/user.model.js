@@ -6,6 +6,7 @@ var crypto = require('crypto');
 var autoinc = require('mongoose-auto-increment');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 var UserSchema = new Schema({
+  _id: Number,
   name: String,
   email: { type: String, lowercase: true },
   role: {

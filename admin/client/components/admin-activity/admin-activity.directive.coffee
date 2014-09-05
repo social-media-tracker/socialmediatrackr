@@ -157,11 +157,11 @@ angular.module 'meanApp'
             uploadingFromSubmit = true
             newLogWaitingOnAttachments = the_log
             uploader.uploadAll()
-            $scope.newLog = getNewLog()
           else
             $scope.ctrl.showMore = false
             $scope.ctrl.submittingForm = false
             $scope.logs.push the_log
+            $scope.newLog = getNewLog()
 
     $scope.toggleAttachments = (log) ->
       return log.showAttachments = false if (log.showAttachments) 

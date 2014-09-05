@@ -1,15 +1,16 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.Types.ObjectId;
-var _ = require('lodash');
-var Log = require('./log.model');
-var moment = require('moment');
-var paginate = require('node-paginate-anything');
-var fs = require('fs');
-var path = require('path');
-var Attachment = require('../attachment/attachment.model');
-var S = require('string');
+var mongoose      = require('mongoose')
+  , ObjectId      = mongoose.Schema.Types.ObjectId
+  , _             = require('lodash')
+  ,  Log          = require('./log.model')
+  ,  User         = require('./log.model')
+  ,  moment       = require('moment')
+  ,  paginate     = require('node-paginate-anything')
+  ,  fs           = require('fs')
+  ,  path         = require('path')
+  ,  Attachment   = require('../attachment/attachment.model')
+  ,  S            = require('string')
 
 
 function uploadAttachment(file, upload_to, filename, attachObj, res, log){
@@ -175,13 +176,19 @@ exports.create = function(req, res) {
     }
     o.createdAt = m.format();
   }
-  
 
+  User.findById(ObjectId('100'), function(err, u) {
+
+    console.log('user 100', err, u);
+  });
 
   try {
     Log.create(o, function(err, log) {
       if(err) { return handleError(res, err); }
-      return res.json(201, log);
+      Log.findById(log._id).populate('user').exec(function(err, l){
+        if(err) { return handleError(res, err); }
+        return res.json(201, l);
+      });
     });
   } catch(e) {
     res.json(200,{error:e.toString()})
