@@ -73,8 +73,16 @@ angular.module 'meanApp'
       console.log fileItem
       instaUploader.uploading =  true
       instaUploader.uploadAll()
+    
     instaUploader.onCompleteAll = ->
       instaUploader.uploading =  false
+
+    instaUploader.onCompleteItem = (fileItem, res) ->
+
+      instaUploader.uploading =  false
+      for l in $scope.logs
+        if l._id == res.log
+          l.attachments.push res
 
     $scope.instaUploader = instaUploader
   

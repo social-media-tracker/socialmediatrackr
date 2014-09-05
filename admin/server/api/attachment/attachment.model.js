@@ -1,12 +1,13 @@
 'use strict';
 
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    fs = require('fs'),
-    path = require('path'),
-    _ = require('lodash'),
-    ATTACH_DIR = path.normalize(path.join(__dirname, '../../../../attachments'));
-    ;
+var mongoose    = require('mongoose')
+  , Schema      = mongoose.Schema
+  , fs          = require('fs')
+  , path        = require('path')
+  , _           = require('lodash')
+  , ATTACH_DIR  = path.normalize(path.join(__dirname, '../../../../attachments'))
+  , Log         = require('../log/log.model')
+  ;
 
 var AttachmentSchema = new Schema({
   name: String,
@@ -51,6 +52,21 @@ AttachmentSchema
 
 AttachmentSchema.pre('remove', function(next){
   fs.unlink(this.full_path, next);
+});
+
+AttachmentSchema.post('remove', function(doc){
+  Log.findById(doc.log, function(err, l){
+    if (l && l.attachments) {
+      var aa = []
+      for (var i =0; i<l.attachments.length;i++) {
+        if (l.attachments[i].toString() != doc._id.toString()) {
+          aa.push(l.attachments[i])
+        }
+      }
+      l.attachments = aa;
+      l.save();
+    }
+  })
 });
 
 module.exports = mongoose.model('Attachment', AttachmentSchema);

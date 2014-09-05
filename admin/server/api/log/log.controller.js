@@ -1,5 +1,7 @@
 'use strict';
 
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.Types.ObjectId;
 var _ = require('lodash');
 var Log = require('./log.model');
 var moment = require('moment');
@@ -24,7 +26,10 @@ function uploadAttachment(file, upload_to, filename, attachObj, res, log){
       if (log) {
         log.attachments = log.attachments || [];
         log.attachments.push(doc._id)
-        log.save(function(){
+        log.save(function(err){
+          if (err) {
+            return res.json(200, {error: 'Unable to link attachment to activity in the db:'  + err.toString()});
+          }
           res.json(200, doc);
         });
 
@@ -52,12 +57,13 @@ exports.upload = function(req, res) {
 
     // figure out if we're uploading to a new or existing item
     if (req.params.id) {
-      // existing item
-      upload_to = path.join(upload_to, req.params.id);
-      console.log("Uploading " + filename + ' to ' + upload_to); 
-
-      attachObj.log = req.params.id;
-      uploadAttachment(file, upload_to, filename, attachObj, res);
+      // existing activity item
+      Log.findById(req.params.id, function(err, doc) {
+        upload_to = path.join(upload_to, req.params.id);
+        attachObj.log = req.params.id;
+        uploadAttachment(file, upload_to, filename, attachObj, res, doc);
+      })
+      
 
     } else if (req.query.uploadKey) {
       // new items
@@ -107,10 +113,8 @@ exports.index = function(req, res) {
     count_query.exec(function(err, total_items){
       if (err) { return handleError(res, err); }
       if (!total_items) { return res.json(200, [])}
-      console.log(total_items);
 
       var queryParameters = paginate(req, res, total_items, 100);
-      console.log(queryParameters);
 
       if (!queryParameters) { return res.json(500, {
         error: 'Error Creating Query Parameters',
