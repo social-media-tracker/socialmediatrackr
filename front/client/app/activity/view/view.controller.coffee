@@ -1,0 +1,41 @@
+'use strict'
+
+angular.module 'meanApp'
+.controller 'ViewCtrl', ($scope, $stateParams, $window, Activity, Attachment, Lightbox) ->
+  $scope.ctrl = 
+    attachmentsLoaded: false
+
+  $scope.log = Activity.get({id:$stateParams.id})
+  $scope.attachments = []
+  $scope.images = []
+
+  Attachment.query {log:$stateParams.id}, (res) ->
+    console.log res
+    $scope.attachments = res
+    for a in $scope.attachments
+      if a.type == 'Image'
+          $scope.images.push
+            _id: a._id
+            url: '/api/attachments/' + a._id + '/passthru'
+            caption: a.name
+    $scope.ctrl.attachmentsLoaded = true
+
+  $scope.showAttachments = (log) ->
+    log.attachments?.length
+
+  $scope.back = ->
+    $window.history.back();
+
+  findAttachmentIndex = (attachment) ->
+    console.log $scope.attachments
+    maxi = $scope.attachments.length
+    for i in [0..maxi]
+      return i if $scope.attachments[i]._id == attachment._id
+    -1
+
+  $scope.showAttachmentImage = (attachment) ->
+    # find the index
+    idx = findAttachmentIndex(attachment)
+    console.log idx
+    console.log $scope.images[idx]
+    Lightbox.openModal($scope.images, idx)

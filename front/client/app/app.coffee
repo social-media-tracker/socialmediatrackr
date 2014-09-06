@@ -7,6 +7,7 @@ angular.module 'meanApp', [
   'ui.router',
   'ui.bootstrap',
   'ng.confirmField'
+  'bootstrapLightbox'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider

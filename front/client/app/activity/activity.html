@@ -6,17 +6,22 @@
 			<p ng-hide="logs.length">
 				There are no activity logs to display.
 			</p>
-			<table class="table" ng-show="logs.length">
+      <ui-view></ui-view>
+			<table class="table" ng-show="showTable()">
 				<thead>
 					<tr>
 						<th>Activity</th>
-						<th class="text-center" width="200">Logged</th>
+						<th class="text-center hidden-xs" width="200">Logged</th>
+            <th width="50" class="text-center hidden-xs"><i class="glyphicon glyphicon-paperclip"></i></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="l in logs">
-						<td>{{l.message}}</td>
-						<td class="text-center">{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
+						<td><a ui-sref="activity.view({id:l._id})">{{l.message}}</a></td>
+						<td class="text-center hidden-xs">{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
+            <td class="hidden-xs">
+              <i ng-show="l.attachments && l.attachments.length" class="glyphicon glyphicon-paperclip"></i></a>
+            </td>
 					</tr>
 				</tbody>
 			</table>
