@@ -65,9 +65,11 @@ exports.postReply = function(req, res) {
     });
     log.save( function(err) {
       if (err) { return handleError(res, err); }
-      res.send(log);
+      Log.findById(req.params.id).populate('replies.user').exec(function(err, newLog){
+        if (err) { return handleError(res, err); }
+        res.send(newLog);
+      });
     });
-
   });
 }
 

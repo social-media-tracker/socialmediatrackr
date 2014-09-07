@@ -12,3 +12,15 @@
 }
 
 a.disabled { color: #777; }
+
+
+.reply {
+  padding: 12px;
+  border: 1px dashed #999;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  margin: 10px; 
+  span {
+    font-size: 12px;
+  }
+}

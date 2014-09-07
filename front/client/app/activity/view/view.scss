@@ -5,9 +5,11 @@
   background-color: #fefefe;
   margin: 10px; 
 }
+
 h4 {
   margin-top: 24px;
 }
+
 .tdcon {
   width: 50px;
   text-align: center;
@@ -22,5 +24,12 @@ h4 {
   span {
     font-size: 14px;
   }
+}
 
+.well {
+  background-color: #fafafa;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+  background-color: #fff;
 }

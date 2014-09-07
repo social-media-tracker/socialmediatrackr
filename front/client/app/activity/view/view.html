@@ -1,45 +1,43 @@
-<div class="panel">
-  <div class="panel-body">
-    <div class="pull-right">
+<div class="well">
+  <div class="pull-right">
     <a href ng-click="back()" class="close">&times;</a>
     <a ui-sref="activity.view.reply" class="btn btn-success btn-xs">Reply</a>&nbsp;&nbsp;
-    </div>
-    <h3>
-      Activity Detail
-      <small><br/>received {{log.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
-    </h3>
-    <h4>Message</h4>
-    <p class="message" ng-bind-html="log.message | linky:'_blank'"></p>
-    <ui-view></ui-view><!-- Reply Form here -->
+  </div>
+  <h3>
+    Activity Detail
+    <small><br/>received {{data.log.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
+  </h3>
+  <h4>Message</h4>
+  <p class="message" ng-bind-html="data.log.message | linky:'_blank'"></p>
+  <ui-view></ui-view><!-- Reply Form here -->
 
-    <div ng-show="showAttachments(log)">
-      <a name="attachments"></a>
-      <h4>Attachments</h4>
-      <table class="table">
-        <tbody><tr>
-          <th>Name</th>
-          <th width="50" colspan="2" class="text-center">Actions</th>
-        </tr></tbody>
-        <tbody><tr ng-repeat="a in attachments">
-          <td>{{a.name}}</td>
-          <td class="tdcon">
-            <a ng-show="a.type=='Image'" ng-click="showAttachmentImage(a, log)" href="">
-              <i class="glyphicon glyphicon-picture"></i>
-            </a>
-          </td><td class="tdcon">
-            <a href="/api/attachments/{{a._id}}/download" target="_blank">
-              <i class="glyphicon glyphicon-download"></i>
-            </a>
-          </td>
-        </tr></tbody>
-      </table>
-    </div>
-    <div ng-show="showReplies()">
-      <h4>Replies</h4>
-      <div ng-repeat="r in log.replies" class="reply">
-        <p>{{r.message}}</p>
-        <span>by <b>{{r.user.name}}</b> on <i>{{r.createdAt | date:'MMM d, yyyy @ h:mm a'}}</i></span>
-      </div>
+  <div ng-show="showAttachments(data.log)">
+    <a name="attachments"></a>
+    <h4>Attachments</h4>
+    <table class="table">
+      <tbody><tr>
+        <th>Name</th>
+        <th width="50" colspan="2" class="text-center">Actions</th>
+      </tr></tbody>
+      <tbody><tr ng-repeat="a in attachments">
+        <td>{{a.name}}</td>
+        <td class="tdcon">
+          <a ng-show="a.type=='Image'" ng-click="showAttachmentImage(a, data.log)" href="">
+            <i class="glyphicon glyphicon-picture"></i>
+          </a>
+        </td><td class="tdcon">
+          <a href="/api/attachments/{{a._id}}/download" target="_blank">
+            <i class="glyphicon glyphicon-download"></i>
+          </a>
+        </td>
+      </tr></tbody>
+    </table>
+  </div>
+  <div ng-show="showReplies(data.log)">
+    <h4>Replies</h4>
+    <div ng-repeat="r in data.log.replies | orderBy:'-createdAt'" class="reply">
+      <p>{{r.message}}</p>
+      <span>by <b>{{r.user.name}}</b> on <i>{{r.createdAt | date:'MMM d, yyyy @ h:mm a'}}</i></span>
     </div>
   </div>
 </div>

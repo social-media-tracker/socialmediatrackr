@@ -13,31 +13,23 @@ angular.module 'meanApp'
     $scope.ctrl = 
       submittingForm: false
       showMore: false
+    $scope.user = Auth.getCurrentUser()
 
     # when uploading files during new item submit:
     uploadingFromSubmit = false
     newLogWaitingOnAttachments = false
 
-    $scope.uploadKey = false
-    gettingUploadKey = false
     uploadedAttachmentIds = []
     uploader = new FileUploader 
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
       formData: []
 
-    uploader.onAfterAddingFile = (fileItem) ->
-      unless $scope.itemId || $scope.uploadKey || gettingUploadKey
-        gettingUploadKey = true
-        $http.get('/api/logs/uploadKey')
-        .then (res) ->
-          $scope.uploadKey = res.data.key
-          $scope.newLog.uploadKey = res.data.key
-          gettingUploadKey = false
-    
     uploader.onBeforeUploadItem = (item) ->
+      item.url = 
       console.log item
-      item.url = '/api/logs/upload?uploadKey=' + $scope.uploadKey
+      item.url = '/api/logs/' + newLogWaitingOnAttachments._id + '/upload'
+
       item
 
     uploader.onCompleteItem = (item, res) ->
@@ -45,22 +37,22 @@ angular.module 'meanApp'
       console.log arguments
       console.log 'onCompleteItem res'
       console.log res
-
       uploadedAttachmentIds.push res._id
 
 
     uploader.onCompleteAll = ->
-      if uploadingFromSubmit
-        uploadingFromSubmit = false
-        uploader.clearQueue()
-        $scope.uploadKey = false
-        $scope.ctrl.submittingForm = false
-        $scope.ctrl.showMore = false
-        if newLogWaitingOnAttachments
-          newLogWaitingOnAttachments.attachmets = uploadedAttachmentIds
-          $scope.logs.push newLogWaitingOnAttachments
-          newLogWaitingOnAttachments = false
-          uploadedAttachmentIds = []
+      console.log this
+      uploader.clearQueue()
+      $scope.ctrl.submittingForm = false
+      $scope.ctrl.showMore = false
+      if newLogWaitingOnAttachments
+        newLogWaitingOnAttachments.attachments = uploadedAttachmentIds
+        $scope.logs.push newLogWaitingOnAttachments
+        newLogWaitingOnAttachments = false
+        $scope.newLog = getNewLog();
+        uploadedAttachmentIds = []
+      else
+        uploadedAttachmentIds = []
 
     $scope.uploader = uploader
 
@@ -163,10 +155,35 @@ angular.module 'meanApp'
             $scope.logs.push the_log
             $scope.newLog = getNewLog()
 
-    $scope.toggleAttachments = (log) ->
-      return log.showAttachments = false if (log.showAttachments) 
+    $scope.toggleReplies = (log) ->
+      return log.showReplies = false if (log.showReplies) 
       for l in $scope.logs
         l.showAttachments = false
+        l.showReplies = false
+
+      log.showReplies = true
+
+    $scope.submitReply = (log, msg) ->
+      $http.post('/api/logs/' + log._id + '/reply', msg).then (res) ->
+        newlog = res.data
+        newlog.showReplies = true
+
+        ll = []
+        for l in $scope.logs
+          if l._id == log._id
+            ll.push(newlog)
+          else
+            ll.push(l)
+        $scope.logs = ll
+
+      
+    $scope.toggleAttachments = (log) ->
+      return log.showAttachments = false if (log.showAttachments) 
+
+      for l in $scope.logs
+        l.showAttachments = false
+        l.showReplies = false
+
       log.showAttachments = true
       return if log.attachmentsLoaded
       $http.get('/api/attachments/?log=' + log._id)

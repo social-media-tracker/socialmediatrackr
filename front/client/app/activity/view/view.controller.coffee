@@ -1,11 +1,11 @@
 'use strict'
 
 angular.module 'meanApp'
-.controller 'ViewCtrl', ($scope, $state, $stateParams, $window, Activity, Attachment, Lightbox) ->
+.controller 'ViewCtrl', ($scope, $state, $stateParams, $window, Activity, Attachment, Lightbox, SharedData) ->
   $scope.ctrl = 
     attachmentsLoaded: false
-
-  $scope.log = Activity.get({id:$stateParams.id})
+  $scope.data = SharedData
+  $scope.data.log = Activity.get({id:$stateParams.id})
   $scope.attachments = []
   $scope.images = []
 

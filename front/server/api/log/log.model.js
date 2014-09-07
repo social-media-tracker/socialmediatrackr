@@ -18,7 +18,6 @@ var LogSchema = new Schema({
   message: String,
   user: {type: Number, ref: 'User'},
   checklist: {type: Schema.Types.ObjectId, ref: 'Checklist', required: false},
-  uploadKey: String,
   attachments:[{type: ObjectId, ref: 'Attachment'}],
   replies: [ReplySchema],
 

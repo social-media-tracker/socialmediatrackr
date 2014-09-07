@@ -18,6 +18,6 @@ router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 // custom routes
 router.post('/:id/upload', auth.hasRole('admin'), controller.upload);
 router.post('/upload', auth.hasRole('admin'), controller.upload);
-router.get('/uploadKey', auth.hasRole('admin'), controller.uploadKey);
+router.post('/:id/reply', auth.hasRole('admin'), controller.reply);
 
 module.exports = router;

@@ -14,12 +14,19 @@ var mongoose          = require('mongoose')
     , config          = require('../../config/environment');
 
 
+var ReplySchema = new Schema({
+  message: {type: String, required: true},
+  user: {type: Number, ref: 'User'}
+});
+
+ReplySchema.plugin(trackable);
+
 var LogSchema = new Schema({
   message: String,
   user: {type: Number, ref: 'User'},
   checklist: {type: Schema.Types.ObjectId, ref: 'Checklist', required: false},
-  uploadKey: String,
-  attachments:[{type: ObjectId, ref: 'Attachment'}]
+  attachments:[{type: ObjectId, ref: 'Attachment'}],
+  replies: [ReplySchema],
 });
 
 
@@ -31,44 +38,10 @@ LogSchema
     return path.join(ATTACH_DIR, this._id.toString());
   });
 
-// find any attachments uploaded before the doc was saved and associate them to the log.
-LogSchema.post('save', function (doc) {
-
-  // check for attachments that might exist for this log
-  if (doc.uploadKey) {
-    Attachment.find({uploadKey:doc.uploadKey,log:null}, function(err, attachments) {
-      if (attachments && attachments.length) {
-        console.log(attachments.length + ' attachments found');
-
-        for (var i in attachments) {
-          var a = attachments[i];
-          var attach_dir = config.public_config.dirs.attachments;//path.normalize(path.join(__dirname, '../../../../attachments'))
-          var move_from = path.join(attach_dir, 'new', a.uploadKey, a.filename);
-          var move_to_folder = path.join(attach_dir, doc._id.toString());
-          var move_to = path.join(move_to_folder, a.filename);
-          if (!fs.existsSync(move_to_folder)){
-            fs.mkdirSync(move_to_folder);
-          }
-          fs.renameSync(move_from, move_to);
-          doc.attachments.push(a._id);
-        }
-
-        // update the attachment records in the db
-        Attachment.update({uploadKey:doc.uploadKey}, {$set:{log:doc._id}}, function(err){
-        doc.save();
-          // not much we can do about errors, need to enable a logger to log them.
-        })
-      }
-    })
-
-  }
-});
-
 LogSchema.pre('save', function(next){
   this.wasNew = this.isNew;
   next();
 });
-
 
 // email user when a new event is created
 LogSchema.post('save', function (doc) {

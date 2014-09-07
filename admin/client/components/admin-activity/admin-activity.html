@@ -16,7 +16,7 @@
           <a href class="btn btn-info" ng-click="ctrl.showMore = !ctrl.showMore"><i class="fa fa-cog"></i></a>
           <button class="btn btn-primary" ng-disabled="ctrl.submittingForm">
             <span ng-hide="ctrl.submittingForm">
-              <i class="glyphicon glyphicon-plus"></i> Add
+              <i class="fa fa-plus"></i> Add
             </span>
             <span ng-show="ctrl.submittingForm">
               <i class="fa fa-spinner fa-spin"></i> ....
@@ -70,19 +70,19 @@
                     </div>
                   </td>
                   <td class="text-center">
-                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
-                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    <span ng-show="item.isSuccess"><i class="fa fa-ok"></i></span>
+                    <span ng-show="item.isCancel"><i class="fa fa-ban-circle"></i></span>
+                    <span ng-show="item.isError"><i class="fa fa-remove"></i></span>
                   </td>
                   <td nowrap>
                     <button ng-show="false" type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
-                        <span class="glyphicon glyphicon-upload"></span> Upload
+                        <span class="fa fa-upload"></span> Upload
                     </button>
                     <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
-                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                        <span class="fa fa-ban-circle"></span> Cancel
                     </button>
                     <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
-                        <span class="glyphicon glyphicon-trash"></span> Remove
+                        <span class="fa fa-trash"></span> Remove
                     </button>
                   </td>
                 </tr>
@@ -99,17 +99,17 @@
               <button ng-show="false" type="button" class="btn btn-success btn-s" 
                       ng-click="uploader.uploadAll()" 
                       ng-disabled="!uploader.getNotUploadedItems().length">
-                  <span class="glyphicon glyphicon-upload"></span> Upload all
+                  <span class="fa fa-upload"></span> Upload all
               </button>
               <button type="button" class="btn btn-warning btn-s" 
                       ng-click="uploader.cancelAll()" 
                       ng-disabled="!uploader.isUploading">
-                  <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+                  <span class="fa fa-ban-circle"></span> Cancel all
               </button>
               <button type="button" class="btn btn-danger btn-s"
                       ng-click="uploader.clearQueue()" 
                       ng-disabled="!uploader.queue.length">
-                  <span class="glyphicon glyphicon-trash"></span> Remove all
+                  <span class="fa fa-trash"></span> Remove all
               </button>
             </div>
           </div>
@@ -117,6 +117,8 @@
         </div>
       </div>
     </form>
+
+
     <h3>Activity Feed</h3>
     <p ng-hide="logs.length">
       There is no activity to display.
@@ -128,17 +130,20 @@
             <th ng-hide="false && userId" width="150">User</th>
             <th>Activity</th>
             <th width="200">Created</th>
-            <th width="100" class="text-center">
-              <i class="glyphicon glyphicon-trash"></i>
+            <th width="50" class="text-center">
+              <i class="fa fa-trash-o"></i>
             </th>
             <th width="50" class="text-center">
-              <i class="glyphicon glyphicon-paperclip"></i>
+              <i class="fa fa-comments"></i>
+            </th>
+            <th width="50" class="text-center">
+              <i class="fa fa-paperclip"></i>
             </th>
           </tr>
         </thead>
         <tbody ng-repeat="l in logs |orderBy:'-createdAt'">
-          <tr ng-class="{active : l._id == selectedLog,warning:l.showAttachments}">
-            <td ng-hide="false && userId"><a ui-sref="users.user({id:l.user._id})">{{l.user.name}}</a></td>
+          <tr ng-class="{active : l._id == selectedLog,warning:l.showAttachments||l.showReplies}">
+            <td ng-hide="false && userId"><a ui-sref="users.user.activity({id:l.user._id})">{{l.user.name}}</a></td>
             <td><a href
                       editable-text="l.message"
                       onbeforesave="beforeSaveLogMessage($data, l._id)"
@@ -146,17 +151,44 @@
                       >{{l.message}}</a></td>
             <td>{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
             <td class="text-center"><a href ng-click="deleteLog(l)">
-              <i class="glyphicon glyphicon-trash"></i>
+              <i class="fa fa-trash-o"></i>
             </a></td>
             <td class="text-center">
+              <a href="" ng-click="toggleReplies(l)" 
+                 ng-class="{disabled:!l.replies || !l.replies.length}">
+                  <i class="fa" ng-class="{'fa-comment-o':!l.replies || !l.replies.length,'fa-comment':l.replies && l.replies.length}"></i>
+              </a>
+            </td><td class="text-center">
               <a href="" ng-click="toggleAttachments(l)" 
                  ng-class="{disabled:!l.attachments || !l.attachments.length}">
-                  <i class="glyphicon glyphicon-paperclip"></i>
+                  <i class="fa fa-paperclip"></i>
               </a>
             </td>
           </tr>
-          <tr ng-show="l.showAttachments" ng-class="{warning:l.showAttachments}">
-            <td colspan="5">
+
+
+          <tr ng-show="l.showReplies" class="warning">
+            <td colspan="6">
+              <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">Replies for {{l.message}}</h3></div>
+                <div class="panel-body" ng-init="l.newMessage = {log:l._id,user:user._id}">
+                  <form ng-submit="submitReply(l, l.newMessage)" role="form">
+                    <textarea class="form-control" ng-model="l.newMessage.message"></textarea>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                  </form>
+
+                  <div class="reply" ng-repeat="r in l.replies|orderBy:'-createdAt'">
+                    <p>{{r.message}}</p>
+                    <span>by {{r.user.name}} on {{r.createdAt | date:'MMM d, yyyy @ h:mm a'}}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+
+          <tr ng-show="l.showAttachments" class="warning">
+            <td colspan="6">
               <div ng-hide="l.attachmentsLoaded"><i class="fa fa-spinner fa-spin"></i></div>
               <div ng-show="l.attachmentsLoaded" class="panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title">Attachments for {{l.message}}</h3></div>
@@ -177,15 +209,15 @@
                       <td>{{a.filename}}</td>
                       <td class="text-center">
                         <a ng-show="a.type=='Image'" ng-click="showAttachmentImage(a, l)" href="">
-                          <i class="glyphicon glyphicon-picture"></i>
+                          <i class="fa fa-picture"></i>
                         </a>
                       </td><td class="text-center">
                         <a href="/api/attachments/{{a._id}}/download" target="_blank">
-                          <i class="glyphicon glyphicon-download"></i>
+                          <i class="fa fa-download"></i>
                         </a>
                       </td><td class="text-center">
                         <a ng-click="deleteAttachment(a, l)" href="">
-                          <i class="glyphicon glyphicon-trash"></i>
+                          <i class="fa fa-trash-o"></i>
                         </a>
                       </td>
                     </tr></tbody>
@@ -200,30 +232,7 @@
                   </div>
                 </div>
               </div>
-              <!--
-              <div ng-show="l.attachmentsLoaded" class="row">
-                <div ng-repeat="a in l.attachments" class="col-xs-6 col-md-3">
-                  <div ng-show="a.type == 'Image'" class="thumbnail">
-                    <a href="" ng-click="showAttachmentImage(a)">
-                      <i class="fa fa-photo fa-2x"></i>
-                    </a>
-                    <div class="caption">
-                      <h3><a href="showAttachmentImage(a)">{{a.name}}</a></h3>
-                    </div>
-                      
-                  </div>
-                  <div ng-show="a.type == 'Other'" class="thumbnail">
-                    <a href="" ng-click="downloadAttachment(a)">
-                      <i class="fa fa-question-circle fa-2x"></i>
-                    </a>
-                    <div class="caption">
-                      <a href="" ng-click="downloadAttachment(a)">{{a.name}}</a>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-              -->
+             
             </td>
           </tr>
         </tbody>
@@ -239,4 +248,3 @@
     </paginateit>
   </div>
 </div>
-newItemKey: <b>{{newItemKey}}</b>
