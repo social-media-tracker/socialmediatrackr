@@ -18,7 +18,7 @@
 				<tbody>
 					<tr ng-repeat="l in list | orderBy:'isDone'" ng-class="{completed:l.completedAt}">
 						<td><i class="fa fa-2x" ng-class="{'fa-square-o': !l.completedAt, 'fa-check-square-o': l.completedAt}"></i></td>
-						<td>{{l.task}}</td>
+						<td ng-bind-html="l.task | linky:'_blank'"></td>
 						<td class="text-center">{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
 						<td class="text-center">
 							<span ng-show="l.completedAt">{{l.completedAt | date:'MMM d, yyyy @ h:mm a'}}</span>

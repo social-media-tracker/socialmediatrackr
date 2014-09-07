@@ -5,9 +5,7 @@
   <small><br/>received {{log.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
 </h3>
 <h4>Message</h4>
-<p class="message">
-  {{log.message}}
-</p>
+<p class="message" ng-bind-html="log.message | linky:'_blank'" />
 <div ng-show="showAttachments(log)">
   <a name="attachments"></a>
   <h4>Attachments</h4>
