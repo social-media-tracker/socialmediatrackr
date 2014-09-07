@@ -7,7 +7,6 @@ dist
 */server/config/local.env.js
 /garbage
 /attachments
-/admin/server/logs
-/front/server/logs
+*/server/logs/*
 
 
