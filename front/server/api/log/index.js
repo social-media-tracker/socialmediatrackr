@@ -13,5 +13,6 @@ router.post('/', auth.hasRole('admin'), controller.create);
 router.put('/:id', auth.hasRole('admin'), controller.update);
 router.patch('/:id', auth.hasRole('admin'), controller.update);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
+router.post('/:id/reply', auth.isAuthenticated(), controller.postReply);
 
 module.exports = router;

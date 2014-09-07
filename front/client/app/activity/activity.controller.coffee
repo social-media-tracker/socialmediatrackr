@@ -6,13 +6,8 @@ angular.module 'meanApp'
   $scope.logs = Activity.query();
   $scope.showTable = ->
     if $state.includes('activity.view')
-      console.log('hiding table')
       return false 
-
-    x = $scope.logs?.length > 0
-    if x 
-      console.log 'showing table'
+    if $scope.logs?.length > 0 
       return true
     else
-      console.log 'no logs to show'
       return false

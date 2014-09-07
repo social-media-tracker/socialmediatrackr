@@ -14,7 +14,7 @@ exports.index = function(req, res) {
 
 // Get a single log
 exports.show = function(req, res) {
-  Log.findById(req.params.id, function (err, log) {
+  Log.findById(req.params.id).populate('replies.user').exec(function (err, log) {
     if(err) { return handleError(res, err); }
     if(!log) { return res.send(404); }
     return res.json(log);
@@ -54,6 +54,22 @@ exports.destroy = function(req, res) {
     });
   });
 };
+
+exports.postReply = function(req, res) {
+  Log.findById(req.params.id, function(err, log){
+    if(err) { return handleError(res, err); }
+    if(!log) { return res.send(404); }
+    log.replies.push({
+      user: req.user._id,
+      message: req.body.message,
+    });
+    log.save( function(err) {
+      if (err) { return handleError(res, err); }
+      res.send(log);
+    });
+
+  });
+}
 
 function handleError(res, err) {
   return res.send(500, err);

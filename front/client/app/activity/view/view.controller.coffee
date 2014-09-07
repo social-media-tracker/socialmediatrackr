@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module 'meanApp'
-.controller 'ViewCtrl', ($scope, $stateParams, $window, Activity, Attachment, Lightbox) ->
+.controller 'ViewCtrl', ($scope, $state, $stateParams, $window, Activity, Attachment, Lightbox) ->
   $scope.ctrl = 
     attachmentsLoaded: false
 
@@ -21,7 +21,7 @@ angular.module 'meanApp'
     $scope.ctrl.attachmentsLoaded = true
 
   $scope.showAttachments = (log) ->
-    log.attachments?.length
+    log.attachments?.length && !$state.includes('activity.view.reply')
 
   $scope.back = ->
     $window.history.back();
@@ -39,3 +39,5 @@ angular.module 'meanApp'
     console.log idx
     console.log $scope.images[idx]
     Lightbox.openModal($scope.images, idx)
+  $scope.showReplies = (log) ->
+    return log.replies?.length > 0
