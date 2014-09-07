@@ -48,6 +48,7 @@ angular.module 'meanApp'
         newLogWaitingOnAttachments.attachments = uploadedAttachmentIds
         $scope.logs.push newLogWaitingOnAttachments
         newLogWaitingOnAttachments = false
+        $scope.newLog = getNewLog();
         uploadedAttachmentIds = []
       else
         uploadedAttachmentIds = []
