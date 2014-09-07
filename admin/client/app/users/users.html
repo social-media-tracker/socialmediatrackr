@@ -14,7 +14,7 @@
           ng-click="selectUser(user)">
           <a href="/users/{{user._id}}/activity">
 		        <strong>{{user.name}}</strong><br>
-		        <span ng-class="{'text-muted':!isSelected(user)}">{{user.email}}</span>
+		        <span class="email" ng-class="{'text-muted':!isSelected(user)}">{{user.email}}</span>
 		        <!--
 		        <a ng-click="delete(user)" class="trash"><span class="glyphicon glyphicon-trash pull-right"></span></a>
 		        -->
