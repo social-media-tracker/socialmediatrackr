@@ -29,7 +29,7 @@ function uploadAttachment(file, upload_to, filename, attachObj, res, log){
     // file has been written, lets create the database record for it.
     Attachment.create(attachObj, function(err, doc){
       if (err) return handlError(res, err, 'Unable to create attachment record in the db');
-      winston.log('info','File Upload %s%s complete.', upload_to, filename);
+      winston.log('info','File Upload %s/%s complete.', upload_to, filename);
       if (log) {
         log.attachments = log.attachments || [];
         log.attachments.push(doc._id)
@@ -71,30 +71,9 @@ exports.upload = function(req, res) {
         attachObj.log = req.params.id;
         uploadAttachment(file, upload_to, filename, attachObj, res, doc);
       })
-      
-
-    } else if (req.query.uploadKey) {
-      // new items
-      var key = req.query.uploadKey;
-
-      // first let's check if an item w/ the upload key exists
-      Log.findOne({uploadKey:key}, function(err, doc){
-        if (doc) {
-          attachObj.log = doc._id;
-          upload_to = path.join(upload_to, doc._id.toString());
-        } else {
-          attachObj.uploadKey = key;
-          upload_to = path.join(upload_to, 'new', key);
-
-        }
-        uploadAttachment(file, upload_to, filename, attachObj, res, doc);
-      })
     } else {
-      return res.json(200, {error: 'Missing log_id and uploadKey, one is required.'});
+      return handleError(res, new Error('Missing Activity ID for attachment.'));
     }
-
-
-
   });
 };
 
@@ -160,9 +139,6 @@ exports.index = function(req, res) {
   }
 };
 
-exports.uploadKey = function(req, res) {
-  res.json(200, {key:(new Date).getTime()});
-};
 // Get a single log
 exports.show = function(req, res) {
   Log.findById(req.params.id, function (err, log) {

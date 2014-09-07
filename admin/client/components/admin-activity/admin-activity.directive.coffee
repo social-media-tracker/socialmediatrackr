@@ -18,26 +18,17 @@ angular.module 'meanApp'
     uploadingFromSubmit = false
     newLogWaitingOnAttachments = false
 
-    $scope.uploadKey = false
-    gettingUploadKey = false
     uploadedAttachmentIds = []
     uploader = new FileUploader 
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
       formData: []
 
-    uploader.onAfterAddingFile = (fileItem) ->
-      unless $scope.itemId || $scope.uploadKey || gettingUploadKey
-        gettingUploadKey = true
-        $http.get('/api/logs/uploadKey')
-        .then (res) ->
-          $scope.uploadKey = res.data.key
-          $scope.newLog.uploadKey = res.data.key
-          gettingUploadKey = false
-    
     uploader.onBeforeUploadItem = (item) ->
+      item.url = 
       console.log item
-      item.url = '/api/logs/upload?uploadKey=' + $scope.uploadKey
+      item.url = '/api/logs/' + newLogWaitingOnAttachments._id + '/upload'
+
       item
 
     uploader.onCompleteItem = (item, res) ->
@@ -45,22 +36,21 @@ angular.module 'meanApp'
       console.log arguments
       console.log 'onCompleteItem res'
       console.log res
-
       uploadedAttachmentIds.push res._id
 
 
     uploader.onCompleteAll = ->
-      if uploadingFromSubmit
-        uploadingFromSubmit = false
-        uploader.clearQueue()
-        $scope.uploadKey = false
-        $scope.ctrl.submittingForm = false
-        $scope.ctrl.showMore = false
-        if newLogWaitingOnAttachments
-          newLogWaitingOnAttachments.attachmets = uploadedAttachmentIds
-          $scope.logs.push newLogWaitingOnAttachments
-          newLogWaitingOnAttachments = false
-          uploadedAttachmentIds = []
+      console.log this
+      uploader.clearQueue()
+      $scope.ctrl.submittingForm = false
+      $scope.ctrl.showMore = false
+      if newLogWaitingOnAttachments
+        newLogWaitingOnAttachments.attachments = uploadedAttachmentIds
+        $scope.logs.push newLogWaitingOnAttachments
+        newLogWaitingOnAttachments = false
+        uploadedAttachmentIds = []
+      else
+        uploadedAttachmentIds = []
 
     $scope.uploader = uploader
 

@@ -12,3 +12,9 @@ h4 {
   width: 50px;
   text-align: center;
 }
+.well {
+  background-color: #fafafa;
+}
+.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+  background-color: #fff;
+}
