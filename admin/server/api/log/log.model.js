@@ -10,7 +10,8 @@ var mongoose          = require('mongoose')
     , fs              = require('fs')
     , ObjectId        = mongoose.Schema.Types.ObjectId
     , ATTACH_DIR      = path.normalize(path.join(__dirname, '../../../../attachments'))
-    ;
+    , winston         = require('winston')
+    , config          = require('../../config/environment');
 
 
 var LogSchema = new Schema({
@@ -41,7 +42,7 @@ LogSchema.post('save', function (doc) {
 
         for (var i in attachments) {
           var a = attachments[i];
-          var attach_dir = path.normalize(path.join(__dirname, '../../../../attachments'))
+          var attach_dir = config.public_config.dirs.attachments;//path.normalize(path.join(__dirname, '../../../../attachments'))
           var move_from = path.join(attach_dir, 'new', a.uploadKey, a.filename);
           var move_to_folder = path.join(attach_dir, doc._id.toString());
           var move_to = path.join(move_to_folder, a.filename);
@@ -63,25 +64,34 @@ LogSchema.post('save', function (doc) {
   }
 });
 
+LogSchema.pre('save', function(next){
+  this.wasNew = this.isNew;
+  next();
+});
+
+
 // email user when a new event is created
 LogSchema.post('save', function (doc) {
-  // create our locals for the template
-  var locals = {
-    log: doc
-  };
-  // need to add user to locals
-  User.findById(doc.user, function(err, user) {
-    // TODO: Find a way to deal with errors like this... a log file would be nice!
-    if (err) { console.log('Error finding user: ' + err.toString()); }
-    if (!user) {console.log('Error finding user with id ' + doc.user); }
-    if (user.subscriptions && user.subscriptions.activityNotification) {
-      locals.user = user;
-      var sendmail_options = {
-        to: user.name + ' <' + user.email + '>',
+  winston.log('was-new', this.wasNew)
+  if (this.wasNew) {
+    // create our locals for the template
+    var locals = {
+      log: doc
+    };
+    // need to add user to locals
+    User.findById(doc.user, function(err, user) {
+      // TODO: Find a way to deal with errors like this... a log file would be nice!
+      if (err) { console.log('Error finding user: ' + err.toString()); }
+      if (!user) {console.log('Error finding user with id ' + doc.user); }
+      if (user.subscriptions && user.subscriptions.activityNotification) {
+        locals.user = user;
+        var sendmail_options = {
+          to: user.name + ' <' + user.email + '>',
+        }
+        sendmail('activity', locals, sendmail_options);
       }
-      sendmail('activity', locals, sendmail_options);
-    }
-  });
+    });
+  }
 });
 
 // delete any attachments when a log gets deleted

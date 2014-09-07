@@ -1,35 +1,41 @@
 'use strict';
 
-var mongoose      = require('mongoose')
-  , ObjectId      = mongoose.Schema.Types.ObjectId
-  , _             = require('lodash')
-  ,  Log          = require('./log.model')
-  ,  User         = require('./log.model')
-  ,  moment       = require('moment')
-  ,  paginate     = require('node-paginate-anything')
-  ,  fs           = require('fs')
-  ,  path         = require('path')
-  ,  Attachment   = require('../attachment/attachment.model')
-  ,  S            = require('string')
+var mongoose    = require('mongoose')
+  , ObjectId    = mongoose.Schema.Types.ObjectId
+  , _           = require('lodash')
+  , Log         = require('./log.model')
+  , User        = require('./log.model')
+  , moment      = require('moment')
+  , paginate    = require('node-paginate-anything')
+  , fs          = require('fs')
+  , path        = require('path')
+  , Attachment  = require('../attachment/attachment.model')
+  , S           = require('string')
+  , winston      = require('winston')
 
 
 function uploadAttachment(file, upload_to, filename, attachObj, res, log){
+  winston.log('info','Uploading %s to %s', filename, upload_to);
+
   if (!fs.existsSync(upload_to)) {
+    winston.log('info', 'Creating %s', upload_to)
     fs.mkdirSync(upload_to);
   }
 
   var fstream = fs.createWriteStream(path.join(upload_to, filename));
   file.pipe(fstream);
   fstream.on('close', function () {
+
     // file has been written, lets create the database record for it.
     Attachment.create(attachObj, function(err, doc){
-      if (err) return res.json(200, {error: 'Unable to create attachment record in the db:'  + err.toString()});
+      if (err) return handlError(res, err, 'Unable to create attachment record in the db');
+      winston.log('info','File Upload %s%s complete.', upload_to, filename);
       if (log) {
         log.attachments = log.attachments || [];
         log.attachments.push(doc._id)
         log.save(function(err){
           if (err) {
-            return res.json(200, {error: 'Unable to link attachment to activity in the db:'  + err.toString()});
+            return handleError(res, err, 'Unable to link attachment to activity in the db');
           }
           res.json(200, doc);
         });
@@ -43,7 +49,7 @@ function uploadAttachment(file, upload_to, filename, attachObj, res, log){
 }
 
 exports.upload = function(req, res) {
-
+  
   req.pipe(req.busboy);
   req.busboy.on('file', function (fieldname, file, filename) {
     var ext = path.extname(filename);
@@ -60,6 +66,7 @@ exports.upload = function(req, res) {
     if (req.params.id) {
       // existing activity item
       Log.findById(req.params.id, function(err, doc) {
+        if (err) return handleError(res, err, 'Unable to locate Activity Log #' + req.params.id)
         upload_to = path.join(upload_to, req.params.id);
         attachObj.log = req.params.id;
         uploadAttachment(file, upload_to, filename, attachObj, res, doc);
@@ -93,6 +100,7 @@ exports.upload = function(req, res) {
 
 // Get list of logs
 exports.index = function(req, res) {
+  winston.log('info','GET /api/logs');
 
   var query, total_items, count_query;
 
@@ -222,6 +230,11 @@ exports.destroy = function(req, res) {
   });
 };
 
-function handleError(res, err) {
+function handleError(res, err, additional_detail) {
+  if (additional_detail) {
+    winston.log('error', additional_detail + ' :: ' + err.toString());
+  } else {
+    winston.log('error', err.toString());
+  }
   return res.send(500, err);
 }

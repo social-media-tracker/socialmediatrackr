@@ -17,12 +17,7 @@ var all = {
 
   // Root path of server
   root: path.normalize(__dirname + '/../../..'),
-  public_config: {
-    dirs: {
-      email_templates: path.normalize(__dirname + '/../../../../email_templates'),
-      attachments: path.normalize(__dirname + '/../../../../attachments'),
-    },
-  },
+  public_config: {},
   // Server port
   port: process.env.PORT || 9001,
 
@@ -64,9 +59,13 @@ var all = {
     callbackURL:  process.env.DOMAIN + '/auth/google/callback'
   }
 };
-
+console.log(process.env.NODE_ENV);
 // Export the config object based on the NODE_ENV
 // ==============================================
-module.exports = _.merge(
-  all,
-  require('./' + process.env.NODE_ENV + '.js') || {});
+
+var env = require('./' + process.env.NODE_ENV + '.js') || {};
+if (env.prototype) {
+  env = env(all);
+}
+
+module.exports = _.merge(all,env);

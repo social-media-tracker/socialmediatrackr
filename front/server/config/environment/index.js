@@ -14,6 +14,7 @@ function requiredProcessEnv(name) {
 // ============================================
 var all = {
   env: process.env.NODE_ENV,
+  public_config: {},
 
   // Root path of server
   root: path.normalize(__dirname + '/../../..'),
@@ -62,6 +63,9 @@ var all = {
 
 // Export the config object based on the NODE_ENV
 // ==============================================
-module.exports = _.merge(
-  all,
-  require('./' + process.env.NODE_ENV + '.js') || {});
+var env = require('./' + process.env.NODE_ENV + '.js') || {};
+if (env.prototype) {
+  env = env(all);
+}
+
+module.exports = _.merge(all,env);

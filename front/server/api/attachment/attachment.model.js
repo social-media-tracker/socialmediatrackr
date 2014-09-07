@@ -5,9 +5,9 @@ var mongoose    = require('mongoose')
   , fs          = require('fs')
   , path        = require('path')
   , _           = require('lodash')
-  , ATTACH_DIR  = path.normalize(path.join(__dirname, '../../../../attachments'))
   , Log         = require('../log/log.model')
-  ;
+  , config      = require('../../config/environment')
+;
 
 var AttachmentSchema = new Schema({
   name: String,
@@ -44,9 +44,9 @@ AttachmentSchema
   .virtual('full_path')
   .get(function(){
     return this.log ?
-      path.join(ATTACH_DIR, this.log.toString(), this.filename)
+      path.join(config.public_config.dirs.attachments, this.log.toString(), this.filename)
     :
-      path.join(ATTACH_DIR, 'new', this.uploadKey, this.filename);
+      path.join(config.public_config.dirs.attachments, 'new', this.uploadKey, this.filename);
 
   });
 

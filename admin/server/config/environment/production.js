@@ -1,20 +1,29 @@
 'use strict';
+var path = require('path');
 
 // Production specific configuration
 // =================================
-module.exports = {
-  // Server IP
-  ip:       process.env.OPENSHIFT_NODEJS_IP ||
-            process.env.IP ||
-            undefined,
+module.exports = function(all) {
+  return {
+    // Server IP
+    ip:       process.env.OPENSHIFT_NODEJS_IP ||
+              process.env.IP ||
+              undefined,
 
-  // Server port
-  port:     process.env.OPENSHIFT_NODEJS_PORT ||
-            process.env.PORT ||
-            9001,
+    // Server port
+    port:     process.env.OPENSHIFT_NODEJS_PORT ||
+              process.env.PORT ||
+              9001,
 
-  // MongoDB connection options
-  mongo: {
-    uri:    'mongodb://localhost/socialmediatrackr'
-  }
+    // MongoDB connection options
+    mongo: {
+      uri:    'mongodb://localhost/socialmediatrackr'
+    },
+    public_config: {
+      dirs: {
+        email_templates: path.normalize(all.root + '/../email_templates'),
+        attachments: path.normalize(all.root + '/../attachments'),
+      },
+    },
+  };
 };

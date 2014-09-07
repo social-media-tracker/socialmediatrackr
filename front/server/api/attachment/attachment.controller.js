@@ -74,17 +74,14 @@ exports.destroy = function(req, res) {
 
 exports.passthru = function(req, res) {
   var id = req.params.id;
-  var attach_dir = path.normalize(path.join(__dirname, '../../../../attachments'));
-
   Attachment.findById(req.params.id, function (err, attachment) {
     res.sendfile(attachment.full_path);
-
   });
 };
 
 exports.download = function(req, res) {
   var id = req.params.id;
-  var attach_dir = path.normalize(path.join(__dirname, '../../../../attachments'));
+  
   Attachment.findById(req.params.id, function (err, attachment) {
     var fp = attachment.full_path;
     var mimetype = mime.lookup(fp);

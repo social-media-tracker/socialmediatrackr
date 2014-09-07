@@ -1,0 +1,8 @@
+{"level":"info","message":"GET /api/logs","timestamp":"2014-09-07T00:15:28.885Z"}
+{"level":"info","message":"GET /api/logs","timestamp":"2014-09-07T00:16:00.638Z"}
+{"level":"info","message":"Uploading alisha.jpg to /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7","timestamp":"2014-09-07T00:19:20.731Z"}
+{"level":"info","message":"Creating /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7","timestamp":"2014-09-07T00:19:20.731Z"}
+{"level":"info","message":"Uploading activity-detail.png to /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7","timestamp":"2014-09-07T00:20:27.715Z"}
+{"level":"info","message":"File Upload /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7activity-detail.png complete.","timestamp":"2014-09-07T00:20:27.723Z"}
+{"level":"info","message":"Uploading actvity-feed-attachments-open.png to /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7","timestamp":"2014-09-07T00:26:07.101Z"}
+{"level":"info","message":"File Upload /home/thom/Projects/smt/attachments/540a2265f5ba33115f1706c7actvity-feed-attachments-open.png complete.","timestamp":"2014-09-07T00:26:07.109Z"}

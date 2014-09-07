@@ -11,6 +11,11 @@ var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
 var autoinc = require('mongoose-auto-increment')
+var winston = require('winston');
+
+winston.add(winston.transports.File, {filename: __dirname + '/logs/winston.log'});
+winston.remove(winston.transports.Console)
+
 // Connect to database
 var mongo_conn = mongoose.connect(config.mongo.uri, config.mongo.options);
 autoinc.initialize(mongo_conn);

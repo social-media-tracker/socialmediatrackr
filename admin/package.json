@@ -36,7 +36,8 @@
     "passport-twitter": "latest",
     "static-favicon": "~1.0.1",
     "string": "^1.9.1",
-    "then-jade": "^2.0.0"
+    "then-jade": "^2.0.0",
+    "winston": "^0.7.3"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
