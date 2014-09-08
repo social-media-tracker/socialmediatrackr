@@ -11,7 +11,20 @@
             <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
           </label>
           <p class="help-block">
-            Send me an email every time something is added to the activity log.
+            <span ng-show="user.subscriptions.activityNotification">Send </span>
+            <span ng-hide="user.subscriptions.activityNotification">Do not send </span>
+            me an email every time something is added to the activity log.
+          </p>
+        </div>
+
+        <div class="chekcbox">
+          <label>
+            <input type="checkbox" ng-model="user.subscriptions.replyNotifications" /> Reply Notifications
+          </label>
+          <p class="help-block">
+            <span ng-show="user.subscriptions.replyNotifications">Send </span>
+            <span ng-hide="user.subscriptions.replyNotifications">Do not send </span>
+            me an email every time an administrator replies to something on the activity log.
           </p>
         </div>
 

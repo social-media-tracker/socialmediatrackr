@@ -11,7 +11,10 @@ var mongoose    = require('mongoose')
   , path        = require('path')
   , Attachment  = require('../attachment/attachment.model')
   , S           = require('string')
-  , winston      = require('winston')
+  , winston     = require('winston')
+  , config      = require('../../config/environment')
+  , sendmail    = require('../../sendmail')
+;
 
 
 function uploadAttachment(file, upload_to, filename, attachObj, res, log){
@@ -163,11 +166,6 @@ exports.create = function(req, res) {
     o.createdAt = m.format();
   }
 
-  User.findById(ObjectId('100'), function(err, u) {
-
-    console.log('user 100', err, u);
-  });
-
   try {
     Log.create(o, function(err, log) {
       if(err) { return handleError(res, err); }
@@ -209,21 +207,49 @@ exports.destroy = function(req, res) {
 };
 
 exports.reply = function(req, res) {
-  Log.findById(req.params.id, function (err, log) {
+  Log.findById(req.params.id).populate('user').exec(function (err, log) {
     if(err) { return handleError(res, err); }
     if(!log) { return res.send(404); }
     log.replies = log.replies || [];
     log.replies.push(req.body)
-    log.save(function(err){
+    log.save(function(err) {
       if(err) { return handleError(res, err); }
-      Log.findById(req.params.id)
-        .populate('user')
-        .populate('replies.user')
-        .exec(function(err, log){
-          if(err) { return handleError(res, err); }
-          if(!log) { return res.send(404); }
-          res.send(log);
-        })
+
+      // try to send an email about it if the user wants it.
+      if (log.user.subscriptions && log.user.subscriptions.replyNotifications) {
+        winston.log('info', 'Sending reply email to %s (%s)', log.user.name, log.user.email);
+
+        var sendmail_locals = {
+          log: log,
+          user: log.user,
+          reply: req.body
+        }
+        var sendmail_options = {
+          to: log.user.name + ' <' + log.user.email + '>',
+        }
+        
+        sendmail('reply', sendmail_locals, sendmail_options);
+        Log.findById(req.params.id)
+          .populate('user')
+          .populate('replies.user')
+          .exec(function(err, log){
+            if(err) { return handleError(res, err); }
+            if(!log) { return res.send(404); }
+
+            res.send(log);
+          });
+
+      } else {
+        Log.findById(req.params.id)
+          .populate('user')
+          .populate('replies.user')
+          .exec(function(err, log){
+            if(err) { return handleError(res, err); }
+            if(!log) { return res.send(404); }
+
+            res.send(log);
+          });
+      }
       
     });
   });
