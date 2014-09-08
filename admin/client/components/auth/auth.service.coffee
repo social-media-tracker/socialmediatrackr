@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module 'meanApp'
-.factory 'Auth', ($location, $rootScope, $http, User, $cookieStore, $q) ->
+.factory 'Auth', ($location, $window, $rootScope, $http, User, $cookieStore, $q) ->
   currentUser = if $cookieStore.get 'token' then User.get() else {}
 
   ###
@@ -18,7 +18,10 @@ angular.module 'meanApp'
       password: user.password
 
     .success (data) ->
+      console.log(data)
       $cookieStore.put 'token', data.token
+      if data.role != 'admin'
+        return $window.location.href = 'http://www.socialmediatrackr.com/activity'
       currentUser = User.get()
       deferred.resolve data
       callback?()
@@ -102,7 +105,13 @@ angular.module 'meanApp'
   @return {Boolean}
   ###
   isLoggedIn: ->
-    currentUser.hasOwnProperty 'role'
+    if currentUser.hasOwnProperty 'role'
+      if currentUser.role != 'admin'
+        $window.location.href = 'http://www.socialmediatrackr.com/activity'
+        return false
+      return true
+    return false
+    
 
 
   ###
@@ -118,7 +127,12 @@ angular.module 'meanApp'
         return
 
     else
-      callback? currentUser.hasOwnProperty 'role'
+      if (currentUser.hasOwnProperty 'role')
+        if currentUser.role != 'admin'
+          $window.location.href = 'http://www.socialmediatrackr.com/activity'
+        callback? true
+      else 
+        callback? false
 
   ###
   Check if a user is an admin
@@ -126,7 +140,6 @@ angular.module 'meanApp'
   @return {Boolean}
   ###
   isAdmin: ->
-    console.log currentUser
     currentUser.role is 'admin'
 
 
