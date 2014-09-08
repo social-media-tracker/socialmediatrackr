@@ -1,3 +1,5 @@
+$bgHoverColor: #EEF9FF;
+
 tr.completed {
 	td {
 		text-decoration: line-through;
@@ -6,4 +8,15 @@ tr.completed {
 			color: #8EADC7;
 		}
 	}
+}
+tbody.clickable {
+  tr {
+    cursor: pointer;
+    &:hover {
+      td {
+        background-color: $bgHoverColor !important;
+      }
+    }
+  }
+  
 }

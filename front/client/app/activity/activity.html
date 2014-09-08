@@ -7,20 +7,24 @@
 				There are no activity logs to display.
 			</p>
       <ui-view></ui-view>
-			<table class="table" ng-show="showTable()">
+			<table class="table table-striped" ng-show="showTable()">
 				<thead>
 					<tr>
 						<th>Activity</th>
 						<th class="text-center hidden-xs" width="200">Logged</th>
-            <th width="50" class="text-center hidden-xs"><i class="glyphicon glyphicon-paperclip"></i></th>
+            <th width="50" class="text-center hidden-xs"><i class="fa fa-comments"></i></th>
+            <th width="50" class="text-center hidden-xs"><i class="fa fa-paperclip"></i></th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr ng-repeat="l in logs">
-						<td><a ui-sref="activity.view({id:l._id})">{{l.message}}</a></td>
+				<tbody class="clickable">
+					<tr ng-repeat="l in logs" ui-sref="activity.view({id:l._id})" class="clickable">
+						<td>{{l.message}}</td>
 						<td class="text-center hidden-xs">{{l.createdAt | date:'MMM d, yyyy @ h:mm a'}}</td>
-            <td class="hidden-xs">
-              <i ng-show="l.attachments && l.attachments.length" class="glyphicon glyphicon-paperclip"></i></a>
+            <td class="text-center hidden-xs">
+              <i ng-show="l.replies && l.replies.length" class="fa fa-comment-o"></i>
+            </td>
+            <td class="text-center hidden-xs">
+              <i ng-show="l.attachments && l.attachments.length" class="fa fa-paperclip"></i>
             </td>
 					</tr>
 				</tbody>
