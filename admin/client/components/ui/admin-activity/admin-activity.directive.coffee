@@ -26,7 +26,6 @@ angular.module 'meanApp'
       formData: []
 
     uploader.onBeforeUploadItem = (item) ->
-      item.url = 
       console.log item
       item.url = '/api/logs/' + newLogWaitingOnAttachments._id + '/upload'
 
