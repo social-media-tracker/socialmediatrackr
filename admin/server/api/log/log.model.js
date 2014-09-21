@@ -69,6 +69,7 @@ LogSchema.post('save', function (doc) {
 
 // delete any attachments when a log gets deleted
 LogSchema.pre('remove', function (next) {
+  var Attachment = require('../attachment/attachment.model')
   var log = this;
   Attachment.find({log:this._id}, function(err, attachments){
     if (err) return next(err);
