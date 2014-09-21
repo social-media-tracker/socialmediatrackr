@@ -4,9 +4,11 @@ angular.module 'meanApp'
 .controller 'UsersCtrl', ($scope, $rootScope, $http, $state, $stateParams, Auth, User) ->
   $rootScope.selectedUser = false
 
-  $http.get '/api/users'
-  .success (users) ->
-    $scope.users = users
+  # $http.get '/api/users'
+  # .success (users) ->
+    # $scope.users = users
+
+  $scope.users = User.query()
 
   $scope.delete = (user) ->
     User.remove id: user._id

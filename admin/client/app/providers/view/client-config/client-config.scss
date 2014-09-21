@@ -1,0 +1,16 @@
+ul.clients {
+  list-style: none;
+  max-width: 300px;
+  li {
+    padding: 8px;
+    border: 1px solid silver;
+    background-color: #ccc;
+    border-radius: 12px;
+    margin: 8px;
+    cursor: pointer;
+    &.active {
+      background-color: #A6F3AB;
+      border-color: #39A940;
+    }
+  }
+}

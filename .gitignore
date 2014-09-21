@@ -8,5 +8,5 @@ dist
 /garbage
 /attachments
 */server/logs/*
-
-
+meteor*
+*/server/sendmail/logs/*

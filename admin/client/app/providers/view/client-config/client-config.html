@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+  <div class="panel-heading"><h4>Provider Clients</h4></div>
+  <div class="panel-body">
+    <p>Click to change their status for this provider</p>
+    <ul class="clients">
+      <li ng-repeat="c in clients" ng-class="{active:hasClient(c._id)}" ng-click="swapClient(c)">
+        <i ng-show="c.saving" class="fa fa-spinner fa-spin"></i>
+        <i ng-show="!c.saving && hasClient(c._id)" class="fa fa-check"></i>
+        <i ng-hide="c.saving || hasClient(c._id)" class="fa fa-ban"></i>
+        {{c.name}}
+      </li>
+    </ul>
+  </div>
+</div>

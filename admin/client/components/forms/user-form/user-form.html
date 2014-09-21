@@ -1,0 +1,80 @@
+<form name="form" role="form" ng-submit="submit(user)" class="form panel panel-default" novalidate>
+  <div class="panel-heading"><h4>{{formHeader()}}</h4></div>
+  <div class="panel-body">
+    <div class="row-fluid">
+      <div class="col-md-6">
+        <label for="name">Name</label>
+        <input class="form-control" type="text" 
+          name="name" id="name" ng-model="user.name" required />
+      </div>
+      <div class="col-md-6">
+        <label for="email">Email</label>
+        <input class="form-control" type="email" 
+          name="email" id="email" ng-model="user.email" required />
+      </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="row-fluid">
+      <div class="col-md-12" ng-hide="isNew"><h4>Optionally change this user's password:</h4></div>
+      <div class="col-md-6">
+        <label for="pword"><span ng-hide="isNew">New </span>Password:</label>
+        <input class="form-control" type="password" name="pword" id="pword" ng-model="user.newPword" ng-required="isNew" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="pword_c">Confirm:</label>
+        <input class="form-control" type="password" name="pword_c" id="pword_c" ng-model="user.newPword_c" ng-required="isNew" />
+      </div>
+    </div>
+    <p>&nbsp;</p>
+    <div class="row-fluid">
+      <div class="col-md-12" ng-show="role=='Provider'">
+        <h4>Provider Subscriptions:</h4>
+        <div class="chekcbox">
+          <label>
+            <input type="checkbox" ng-model="user.provider_subscriptions.newTaskNotification" /> New Task Notification
+          </label>
+        </div>
+      </div>
+      <div class="col-md-12" ng-show="role=='Client'">
+        <h4>Client Subscriptions:</h4>
+
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.subscriptions.activityNotification">Send </span>
+              <span ng-hide="user.subscriptions.activityNotification">Do not send </span>
+              me an email every time something is added to the activity log.
+            </p>
+          </div>
+
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.subscriptions.replyNotifications" /> Reply Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.subscriptions.replyNotifications">Send </span>
+              <span ng-hide="user.subscriptions.replyNotifications">Do not send </span>
+              me an email every time an administrator replies to something on the activity log.
+            </p>
+          </div>
+
+      </div>
+    </div>
+    
+    <p>&nbsp;</p>
+    <div class="row-fluid">
+      <div class="col-md-12 text-right">
+      <indicator-button 
+        bsclass="primary"
+        type="submit"
+        state="{{ctrl.buttonState}}"
+        isDisabled="{{form.$invalid?1:0}}"
+        errorText="{{ctrl.errorText}}"></indicator-button>
+      </div>
+
+    </div>
+  </div>
+</form>

@@ -1,0 +1,59 @@
+<form ng-submit="submitLog(log)" role="form" class="form" novalidate>
+<h2>Task Detail</h2>
+<div class="well">
+  <b>{{task.cat.name}} for {{task.client.name}}</b>
+  <p>{{task.message}}</p>
+</div>
+<h3>Add to Work Log</h3>
+
+<div class="input-group">
+  <input type="text" class="form-control" ng-model="log.message" required>
+  <span class="input-group-btn">
+    <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i><span class="hidden-xs"> Save</span></button>
+  </span>
+</div>
+</form>
+
+<br />
+<div ng-hide="task.logs.length">No work logs have been recorded yet.</div>
+
+<div ng-show="task.logs.length">
+  <h4>Work Log</h4>
+  <table class="table">
+    <thead><tr>
+      <th>Message</th>
+      <th class="center"><i class="fa fa-comments"></i></th>
+    </tr></thead>
+    <tbody ng-repeat="l in task.logs" class="row{{$index%2}}">
+      <tr>
+        <td><a href ng-click="logClick(l)">{{l.message}}</a></td>
+        <td><a href ng-click="logClick(l)"><i class="fa" ng-class="{'fa-comment-o':!l.comments.length,'fa-comment':l.comments.length}"></i></a></td>
+      </tr>
+      <tr ng-show="l.showComments">
+        <td colspan="2">
+          <h4>Comments</h4>
+          <form class="form" role="form" name="commentForm" novalidate ng-submit="submitComment(l)">
+            <div class="row"><div class="col-xs-12">
+            <div class="input-group">
+              <input type="text" class="form-control" ng-model="l.newComment" required>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i><span class="hidden-xs"> Save</span></button>
+              </span>
+            </div></div></div>
+          </form>
+          <div ng-repeat="c in l.comments" class="task-log-comment">
+            <div class="row">
+              <div class="col-sm-12">
+                {{c.message}}
+                <br />
+                <small>by {{u(c.user)}} on {{c.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
+              </div>
+            </div>
+          </div>
+
+        </td>
+      </tr>    
+    </tbody>
+  </table>
+
+</div>

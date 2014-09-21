@@ -63,8 +63,10 @@ AttachmentSchema.post('remove', function(doc){
           aa.push(l.attachments[i])
         }
       }
-      l.attachments = aa;
-      l.save();
+      if (l.attachments.length != aa.length) {
+        l.attachments = aa;
+        l.save();
+      }
     }
   })
 });

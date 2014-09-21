@@ -18,4 +18,8 @@ router.use('/facebook', require('./facebook'));
 router.use('/twitter', require('./twitter'));
 router.use('/google', require('./google'));
 
+router.post('/afterLoginSuccess', function (req, res) {
+  res.status(200).send('<html><head><meta http-equiv="refresh" content="0,' + req.body.redir + '"></head><body>Success! Redirecting...</body></html>');
+});
+
 module.exports = router;

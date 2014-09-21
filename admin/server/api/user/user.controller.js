@@ -15,23 +15,84 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-  User.find({}, '-salt -hashedPassword -password', function (err, users) {
+  var q = {}
+  if (req.query.role) {
+    if (req.query.role != 'all') q.role = req.query.role;
+  } else {
+    q.role = {$ne:'provider'};
+  }
+
+  if (req.query.ids) {
+    q._id = {$in:req.query.ids.split(',')};
+  }
+  
+  User.find(q, '-salt -hashedPassword -password', function (err, users) {
     if(err) return res.send(500, err);
     res.json(200, users);
   });
 };
 
 /**
+ * Get list of users
+ * restriction: 'admin'
+ */
+exports.providers = function(req, res) {
+  User.find({role:'provider'}, '-salt -hashedPassword -password', function (err, users) {
+    if(err) return res.send(500, err);
+    res.json(200, users);
+  });
+};
+
+exports.addToProvider = function(req, res) {
+  User.findById(req.params.providerId, function(err, provider){
+    if (err) return res.send(500, err);
+    if (!provider) return res.send(404);
+    console.log(provider);
+    provider.provider_clients = provider.provider_clients || []
+    provider.provider_clients.push(req.params.clientId)
+    provider.save(function(){
+      res.json({});
+    });
+
+  })
+}
+
+exports.removeFromProvider = function(req, res) {
+  User.findById(req.params.providerId, function(err, provider){
+    if (err) return res.send(500, err);
+    if (!provider) return res.send(404);
+    console.log(provider);
+    provider.provider_clients = provider.provider_clients.map(function(v){
+      return v == req.params.clientId ? null : v
+    })
+    provider.save(function(){
+      res.json({});
+    });
+
+  })
+}
+
+/**
  * Creates a new user
  */
 exports.create = function (req, res, next) {
-  var newUser = new User(req.body);
+  console.log('create user');
+  console.log(req.body);
+  var u = req.body;
+  if (u.newPword) u.password = u.newPword;
+  if (u.newPword_c) u.password_c = u.newPword_c;
+
+  var newUser = new User(u);
   newUser.provider = 'local';
-  newUser.role = 'user';
+  newUser.role = newUser.role || 'user';
   newUser.save(function(err, user) {
     if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
+    if (req.body.isSignup) {
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+      res.json({ token: token });
+    } else {
+      res.json(user)
+    }
   });
 };
 

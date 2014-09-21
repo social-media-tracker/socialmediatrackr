@@ -32,6 +32,12 @@
     <!-- Add your site or application content here -->
     <div ui-view=""></div>
 
+    <form id="rememberLoginForm" name="rememberLoginForm" action="/auth/afterLoginSuccess" method="post" style="display:none;">
+      <input type="hidden" name="redir">
+      <input type="text" name="username">
+      <input type="password" name="password">
+    </form>
+
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -64,6 +70,9 @@
       <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
       <script src="bower_components/angular-touch/angular-touch.js"></script>
       <script src="bower_components/angular-bootstrap-lightbox/dist/angular-bootstrap-lightbox.js"></script>
+      <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+      <script src="bower_components/moment/moment.js"></script>
+      <script src="bower_components/angular-moment/angular-moment.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
 
@@ -74,19 +83,39 @@
           <script src="app/checklist/checklist.js"></script>
           <script src="app/logs/logs.js"></script>
           <script src="app/main/main.js"></script>
+          <script src="app/providers/new/new.js"></script>
+          <script src="app/providers/providers.js"></script>
+          <script src="app/providers/view/client-config/client-config.js"></script>
+          <script src="app/providers/view/delete/delete.js"></script>
+          <script src="app/providers/view/edit/edit.js"></script>
+          <script src="app/providers/view/task/task.js"></script>
+          <script src="app/providers/view/view.js"></script>
+          <script src="app/tasks/task/task.js"></script>
+          <script src="app/tasks/tasks.js"></script>
+          <script src="app/users/new/new.js"></script>
           <script src="app/users/user/activity/activity.js"></script>
           <script src="app/users/user/checklist/checklist.js"></script>
           <script src="app/users/user/edit/edit.js"></script>
           <script src="app/users/user/user.js"></script>
           <script src="app/users/users.js"></script>
-          <script src="components/activity/activity.js"></script>
-          <script src="components/admin-activity/admin-activity.js"></script>
-          <script src="components/admin-checklist/admin-checklist.js"></script>
-          <script src="components/attachment/attachment.js"></script>
-          <script src="components/auth/auth.js"></script>
-          <script src="components/auth/user.js"></script>
-          <script src="components/mongoose-error/mongoose-error.js"></script>
-          <script src="components/navbar/navbar.js"></script>
+          <script src="components/components/indicator-button/indicator-button.js"></script>
+          <script src="components/filters/trunc/trunc.js"></script>
+          <script src="components/forms/user-form/user-form.js"></script>
+          <script src="components/services/activity/activity.js"></script>
+          <script src="components/services/attachment/attachment.js"></script>
+          <script src="components/services/auth/auth.js"></script>
+          <script src="components/services/auth/user.js"></script>
+          <script src="components/services/cat/cat.js"></script>
+          <script src="components/services/mongoose-error/mongoose-error.js"></script>
+          <script src="components/services/provider/provider.js"></script>
+          <script src="components/services/task/task.js"></script>
+          <script src="components/services/template/template.js"></script>
+          <script src="components/services/users/users.js"></script>
+          <script src="components/ui/admin-activity/admin-activity.js"></script>
+          <script src="components/ui/admin-checklist/admin-checklist.js"></script>
+          <script src="components/ui/navbar/navbar.js"></script>
+          <script src="components/ui/search-results/search-results.js"></script>
+          <script src="components/ui/uploader/uploader.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
 </body>

@@ -1,0 +1,22 @@
+
+<table class="{{options.tableClass || 'table'}}">
+  <thead><tr><th ng-repat="h in headers">{{h.text}}</th></tr></thead>
+  <tbody><tr ngrepeat="d in data">
+    <td ng-repeat="c in cols">{{d[h.key]}}</td>
+  </tr></tbody>
+
+</table>
+
+<pre>data
+{{data}}
+
+filters
+{{filters}}
+
+headers
+{{headers}}
+
+options
+{{options}}
+
+</pre>

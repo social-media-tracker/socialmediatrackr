@@ -1,0 +1,48 @@
+<div ng-include="'components/ui/navbar/navbar.html'"></div>
+<div class="container">
+  <div ng-show="showProviders()" class="panel panel-default">
+    <div class="panel-heading">
+      <h4>Providers <a ui-sref="providers.new" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Add Provider</a></h4>
+    </div>
+    <div class="panel-body">
+
+
+      <p ng-hide="searchResults.providers.length">No providers found.</p>
+      <table class="table" ng-show="searchResults.providers.length">
+        <thead><tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th class="text-center">Actions</th>
+        </tr></thead>
+        <tbody>
+          <tr ng-repeat="p in searchResults.providers" ng-click="providerClick(p)">
+            <td>{{p._id}}</td>
+            <td>{{p.name}}</td>
+            <td class="text-center">
+              <div class="button-group">
+                <a ui-sref="providers.view({id:p._id})" class="btn btn-success" title="Task List"><i class="fa fa-list-alt"></i></a>
+                <a ui-sref="providers.view.edit({id:p._id})" class="btn btn-info" title="Edit Provider"><i class="fa fa-edit"></i></a>
+                <a ui-sref="providers.view.client-config({id:p._id})" class="btn btn-warning" title="Configure Clients"><i class="fa fa-cog"></i></a>
+                <a ui-sref="providers.view.delete({id:p._id})" class="btn btn-danger" title="Delete Provider"><i class="fa fa-trash-o"></i></a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+
+
+      <paginateit 
+        collection="searchResults.providers"
+        url="searchResults.filters.apiURL"
+        per-page="searchResults.filters.perPage"
+        auto-presets="false"
+        per-page-presets="[10,20,50,100]"
+        template-url="/assets/paginate-anything.html">
+      </paginateit>
+    </div>
+  </div>
+  <ui-view></ui-view>
+</div>
+
+

@@ -17,7 +17,7 @@ var all = {
 
   // Root path of server
   root: path.normalize(__dirname + '/../../..'),
-  public_config: {},
+  public_config: {env:process.env.NODE_ENV||'development'},
   // Server port
   port: process.env.PORT || 9001,
 
@@ -30,7 +30,7 @@ var all = {
   },
 
   // List of user roles
-  userRoles: ['guest', 'user', 'admin'],
+  userRoles: ['guest', 'user', 'provider', 'admin'],
 
   // MongoDB connection options
   mongo: {

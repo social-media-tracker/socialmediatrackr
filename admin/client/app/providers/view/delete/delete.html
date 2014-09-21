@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+  <div class="panel-heading"><h4>Delete Provider</h4></div>
+  <div class="panel-body">
+      <p>Deleting this provider will:</p>
+      <ul>
+        <li>Remove all tasks assigned to them.</li>
+        <li>Remove all activity submitted by them.</li>
+        <li>Remove any attachments uploaded by them.</li>
+        <li>Remove the client associations (but not the clients)</li>
+      </ul>
+      <h5 class="text-center">Are you sure you wish to continue?</h5>
+      <p class="text-center">
+        <button class="btn btn-danger" ng-click="confirmDelete()"><i class="fa fa-bomb"></i> Yes</button>
+        <a class="btn btn-success" ui-sref="providers.view({id:id})"><i class="fa fa-ban"></i> No</a>
+      </p>
+  </div>
+</div>

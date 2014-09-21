@@ -10,6 +10,7 @@ angular.module 'meanApp', [
   'angularFileUpload'
   'xeditable'
   'bootstrapLightbox'
+  'ui.utils'
 ]
 .config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
   $urlRouterProvider
@@ -33,8 +34,14 @@ angular.module 'meanApp', [
       $cookieStore.remove 'token'
 
     $q.reject response
+    
+.service 'ProviderStor', ->
+  return {
+    provider: false
+  }
 
-.run ($rootScope, $location, Auth, editableOptions) ->
+.run ($rootScope, $location, Auth, editableOptions, Users) ->
+  Users.loadUsers()
 
   # set xeditable's theme to bootstrap 3
   editableOptions.theme = 'bs3'

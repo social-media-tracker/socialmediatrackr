@@ -13,14 +13,15 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
-  hashedPassword: String,
+  hashedPassword: {type: String, select: false},
   provider: String,
-  salt: String,
+  salt: {type: String, select: false},
   facebook: {},
   twitter: {},
   google: {},
   github: {},
-  subscriptions: {} // stores what emails they want to receive.
+  subscriptions: {}, // stores what emails they want to receive.
+  provider_clients: [{type:Number, ref:'User'}]
 });
 
 

@@ -1,0 +1,132 @@
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+    <h3 class="pull-left">Provider: {{user.name}}</h3>
+    <div class="pull-right right-pills" id="providerNav">
+    <ul class="nav nav-pills">
+      <li ng-class="{active:isActive('')}"><a ui-sref="providers.view({id:id})"><i class="fa fa-list-alt"></i> Tasks</a></li>
+      <li ng-class="{active:isActive('edit')}"><a ui-sref="providers.view.edit({id:id})"><i class="fa fa-edit"></i> Edit</a></li>
+      <li ng-class="{active:isActive('client-config')}"><a ui-sref="providers.view.client-config({id:id})"><i class="fa fa-cog"></i> Clients</a></li>
+      <li ng-class="{active:isActive('delete')}"><a ui-sref="providers.view.delete({id:id})"><i class="fa fa-trash-o"></i> Delete</a></li>
+    </ul></div>
+  </div>
+  <div class="panel-body">
+
+
+
+    <div ng-show="showTasks()" class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h4 class="pull-left">Tasks <a href ng-click="addTaskClick()" class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Task</a></h4>
+        <div class="pull-right right-pills" ng-hide="ctrl.showTaskForm">
+          <ul class="nav nav-pills">
+            <li>
+              <div class="btn-group" dropdown is-open="ctrl.isOpen.cat">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" ng-disabled="disabled">
+                  Category <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li ng-class="{active:!filters.cat}"><a href ng-click="setFilter('cat',0)">All</a></li>
+                  <li class="divider"></li>
+                  <li ng-repeat="c in cats|orderBy:'name'" ng-class="{active:filters.cat==c._id}">
+                    <a href ng-click="setFilter('cat',c._id)">{{c.name}}</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <div class="btn-group" dropdown is-open="ctrl.isOpen.client">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" ng-disabled="disabled">
+                  Client <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li ng-class="{active:!filters.client}"><a href ng-click="setFilter('client',0)">All</a></li>
+                  <li class="divider"></li>
+                  <li ng-repeat="c in clients|orderBy:'name'" ng-class="{active:filters.client._id==c._id}">
+                    <a href ng-click="setFilter('client._id',c._id)">{{c.name}}</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form name="form" role="form" ng-submit="submitTask(task)" class="form-horizontal" ng-show="ctrl.showTaskForm">
+          <h4>{{formHeading()}}</h4>
+          <div class="form-group">
+            <div ng-class="{'col-sm-4':ctrl.selectedCatId,'col-sm-5':!ctrl.selectedCatId}">
+              <input id="taskCat" type="text" ng-model="task.cat" class="form-control"
+                     placeholder="Task Category"
+                     typeahead="c.name for c in cats | filter:$viewValue | limitTo:8" 
+                     typeahead-on-select="catSelected($item)"
+                     ng-disabled="ctrl.selectedCatId">
+            </div>
+            <div class="col-sm-1" ng-show="ctrl.selectedCatId">
+              <a href ng-click="ctrl.selectedCatId=0" class="btn btn-default"><i class="fa fa-ban"></i></a>
+            </div>
+
+            <label class="col-sm-1 control-label" for="clientId">Client:</label>
+            <div class="col-sm-6">
+              <select ng-model="task.client" id="clientId" class="form-control"
+                      ng-options="c.name for c in clients"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div ng-class="{'col-sm-11':ctrl.usingTemplateTask,'col-sm-12':!ctrl.usingTemplateTask}">
+              <input id="taskMsg" type="text" ng-model="task.message" class="form-control"
+                     placeholder="Start typing to search task templates..."
+                     typeahead="t.message for t in templates | filter:$viewValue | limitTo:8" 
+                     typeahead-on-select="taskSelected($item)"
+                     ng-disabled="ctrl.usingTemplateTask">
+            </div>
+            <div class="col-sm-1" ng-show="ctrl.usingTemplateTask">
+              <a href ng-click="unsetTemplateTask()" class="btn btn-default"><i class="fa fa-ban"></i></a>
+            </div>
+          </div><div class="form-group">
+            <div class="col-sm-11 text-right">
+              <div class="checkbox" ng-hide="ctrl.usingTemplateTask">
+                <label>
+                  <input type="checkbox" ng-model="task.saveAsTemplate"> Save as Template
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-1">
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </form>
+
+        <table ng-hide="ctrl.showTaskForm" class="table table-striped">
+          <thead><tr>
+            <th width="150">Client</th>
+            <th width="150">Category</th>
+            <th>Task</th>
+            <th width="100" class="text-center">Assigned</th>
+            <th width="150" class="text-center">Completed</th>
+            <th width="50" class="text-center"><i class="fa fa-trash-o"></i></th>
+          </tr></thead>
+          <tbody><tr ng-repeat="t in tasks | orderBy:'-createdAt'">
+            <td>{{t.client.name}}</td>
+            <td>{{t.cat.name}}</td>
+            <td><a ui-sref="providers.view.task({id:t.provider._id,task_id:t._id})">{{t.message}}</a></td>
+            <td class="text-center">{{t.createdAt | date:"M/d/yy"}}</td>
+            <td>
+              <div class="checkbox td-checkbox" ng-hide="t.savingCompleted">
+                <label>
+                  <input type="checkbox" ng-click="completedTask(t)" ng-model="t.isCompleted" />
+                  <span ng-show="t.completedAt">
+                    {{t.createdAt | date:"M/d/yy"}}
+                  </span>
+                </label>
+              </div>
+              <span ng-show="t.savingCompleted">
+                <i class="fa fa-spinner fa-spin"></i>
+              </span>
+            </td>
+            <td class="text-center"><a ng-click="deleteTask(t)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a></td>
+          </tr></tbody>
+        </table>
+
+      </div>
+    </div>
+    <ui-view></ui-view>
+</div>
