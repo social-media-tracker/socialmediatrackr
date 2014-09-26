@@ -93,6 +93,31 @@ angular.module 'meanApp'
 
 
   ###
+  Change subscriptions
+
+  @param  {object}   subscriptions
+  @param  {Function} callback    - optional
+  @return {Promise}
+  ###
+  changeSubscriptions: (subs, callback) ->
+    console.log subs
+    User.changeSubscriptions
+      id: currentUser._id
+    ,
+      subscriptions: subs.subscriptions
+      provider_subscriptions: subs.provider_subscriptions
+
+    , (user) ->
+      callback? user
+
+    , (err) ->
+      callback? err
+
+    .$promise
+
+
+
+  ###
   Gets all available info on authenticated user
 
   @return {Object} user

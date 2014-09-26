@@ -21,6 +21,7 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   subscriptions: {}, // stores what emails they want to receive.
+  provider_subscriptions: {}, // stores what emails they want to receive.
   provider_clients: [{type:Number, ref:'User'}]
 });
 
@@ -51,7 +52,8 @@ UserSchema
     return {
       'name': this.name,
       'role': this.role,
-      'subscriptions': this.subscriptions
+      'subscriptions': this.subscriptions,
+      'provider_subscriptions': this.provider_subscriptions
     };
   });
 

@@ -1,0 +1,117 @@
+<div ng-include="'components/ui/navbar/navbar.html'"></div>
+
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-12">
+      <h1>Email Notifications</h1>
+      <form class="form" name="nForm" ng-submit="changeSubscriptions(nForm)" novalidate>
+
+        <div ng-show="user.role=='provider'">
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.provider_subscriptions.newTaskNotification" /> New Task Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.provider_subscriptions.newTaskNotification">Send </span>
+              <span ng-hide="user.provider_subscriptions.newTaskNotification">Do not send </span>
+              me an email every time a new task is added to my task list.
+            </p>
+          </div>
+
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.provider_subscriptions.newCommentNotification" /> New Comment Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.provider_subscriptions.newCommentNotification">Send </span>
+              <span ng-hide="user.provider_subscriptions.newCommentNotification">Do not send </span>
+              me an email every time a comment is posted to my work log.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div ng-show="user.role=='user' || user.role=='admin'">
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.subscriptions.activityNotification">Send </span>
+              <span ng-hide="user.subscriptions.activityNotification">Do not send </span>
+              me an email every time something is added to the activity log.
+            </p>
+          </div>
+
+          <div class="chekcbox">
+            <label>
+              <input type="checkbox" ng-model="user.subscriptions.replyNotifications" /> Reply Notifications
+            </label>
+            <p class="help-block">
+              <span ng-show="user.subscriptions.replyNotifications">Send </span>
+              <span ng-hide="user.subscriptions.replyNotifications">Do not send </span>
+              me an email every time an administrator replies to something on the activity log.
+            </p>
+          </div>
+        </div>
+
+        <p class="help-block" ng-show="notifications.error">{{notifications.error}}</p>
+        <p class="help-block text-success" ng-show="notifications.message">{{notifications.message}}</p>
+
+        <button class="btn btn-lg btn-primary" type="submit">Save Notification Settings</button>
+      </form>
+    </div>
+
+    <div class="col-sm-12">
+      <h1>Change Password</h1>
+    </div>
+    <div class="col-sm-12">
+      <form class="form" name="form" ng-submit="changePassword(form)" novalidate>
+
+        <div class="form-group">
+          <label>Current Password</label>
+
+          <input type="password" name="password" class="form-control" ng-model="user.oldPassword"
+                 mongoose-error/>
+          <p class="help-block" ng-show="form.password.$error.mongoose">
+              {{ errors.other }}
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>New Password</label>
+
+          <input type="password" name="newPassword" class="form-control" ng-model="user.newPassword"
+                 ng-minlength="3"
+                 required/>
+          <p class="help-block"
+             ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || submitted)">
+            Password must be at least 3 characters.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="passwordConfirm">Confirm New Password</label>
+
+          <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control"
+                 ng-model="passwordConfirm"
+                 ng-confirm-field
+                 confirm-against="user.newPassword"
+                 ng-minlength="3"
+                 required />
+          <p class="help-block"
+             ng-show="form.passwordConfirm.$error.noMatch && submitted">
+            Passwords must match.
+          </p>
+        </div>
+
+
+        <p class="help-block"> {{ message }} </p>
+
+        <button class="btn btn-lg btn-primary" type="submit">Save New Password</button>
+      </form>
+    </div>
+  </div>
+</div>

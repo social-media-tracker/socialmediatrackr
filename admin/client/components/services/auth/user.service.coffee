@@ -9,6 +9,10 @@ angular.module 'meanApp'
       method: 'PUT'
       params:
         controller: 'password'
+    changeSubscriptions:
+      method: 'PUT'
+      params:
+        controller: 'subscriptions'
     clients:
       method: 'GET'
       isArray: true

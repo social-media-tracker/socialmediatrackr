@@ -12,6 +12,7 @@ router.get('/providers', auth.hasRole('admin'), controller.providers);
 router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 router.get('/me', auth.isAuthenticated(), controller.me);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
+router.put('/:id/subscriptions', auth.isAuthenticated(), controller.changeSubscriptions);
 router.get('/:clientId/addToProvider/:providerId', auth.hasRole('admin'), controller.addToProvider);
 router.get('/:clientId/removeFromProvider/:providerId', auth.hasRole('admin'), controller.removeFromProvider);
 router.get('/:id', auth.isAuthenticated(), controller.show);

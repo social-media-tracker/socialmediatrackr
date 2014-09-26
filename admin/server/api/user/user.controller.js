@@ -177,6 +177,30 @@ exports.changePassword = function(req, res, next) {
   });
 };
 
+
+exports.changeSubscriptions = function(req, res, next) {
+  var userId = req.user._id;
+  var subs = req.body;
+
+  User.findById(userId, function (err, user) {
+    if (err) {
+      return res.send(500);
+    }
+    if (!user) {
+      return res.send(501);
+    }
+
+    user.subscriptions = subs.subscriptions;
+    user.provider_subscriptions = subs.provider_subscriptions;
+
+    user.save(function(err){
+      if (err) return validationError(res, err);
+      res.status(200).send(user.profile);
+    });
+  });
+};
+
+
 /**
  * Get my info
  */
