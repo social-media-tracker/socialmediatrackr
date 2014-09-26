@@ -114,13 +114,14 @@ exports.create = function(req, res) {
       // email the provider if they've subscribed to newTaskNotification
       if (task.provider.provider_subscriptions.newTaskNotification) {
 
-        winston.log('info', 'Sending reply email to %s (%s)', log.user.name, log.user.email);
+        winston.log('info', 'Sending new task email to %s (%s)', task.provider.name, task.provider.email);
 
         var sendmail_locals = {
           task: task,
           user: task.provider
         }
         var sendmail_options = {
+          subject: 'SocialMediaTrackr.com New Task Notification (#' + task._id + ')',
           to: task.provider.name + ' <' + task.provider.email + '>',
         }
         
