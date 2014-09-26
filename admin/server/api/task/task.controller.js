@@ -6,6 +6,7 @@ var Template = require('../template/template.model');
 var Cat = require('../category/category.model');
 var async = require('async');
 var path = require('path');
+var mime = require('mime');
 var fs = require('fs');
 
 // Get list of tasks
@@ -211,6 +212,29 @@ exports.passthruLogAttachment = function(req, res) {
     res.sendfile(file_path);
 
 
+  });
+};
+exports.downloadLogAttachment = function(req, res) {
+  console.log('loading attachment %s %s %s', req.params.id, req.params.log_id, req.params.attach_id)
+  var task_id = req.params.id;
+  Task.findById(task_id, function(err, task){
+    if(err) { return handleError(res, err); }
+    if(!task) { return res.send(404); }
+
+    var log_id = req.params.log_id;
+    var attach_id = req.params.attach_id;
+
+    var logIndex = _.findIndex(task.logs, function(l) {return l._id == log_id});
+    var attachIndex = _.findIndex(task.logs[logIndex].attachments, function(a) {return a._id == attach_id});
+    var attach = task.logs[logIndex].attachments[attachIndex];
+
+    var file_path = path.join(res.locals.cfg.dirs.attachments, 'tasks', task_id, log_id, attach_id + '.' + attach.ext);
+    console.log(file_path);
+
+    var mimetype = mime.lookup(file_path);
+    res.setHeader('Content-disposition', 'attachment; filename=' + attach.name + '.' + attach.ext);
+    res.setHeader('Content-type', mimetype);
+    fs.createReadStream(file_path).pipe(res);
   });
 };
 

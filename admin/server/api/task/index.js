@@ -17,6 +17,7 @@ router.post('/:id/completed', auth.hasRole('admin'), controller.completed);
 router.post('/:id/uncompleted', auth.hasRole('admin'), controller.uncompleted);
 
 router.get('/:id/logs/:log_id/attachments/:attach_id/view', controller.passthruLogAttachment);
+router.get('/:id/logs/:log_id/attachments/:attach_id/download', controller.downloadLogAttachment);
 router.delete('/:id/logs/:log_id/attachments/:attach_id', controller.deleteAttachment);
 router.post('/:id/logs', auth.isAuthenticated(), controller.postLog);
 router.post('/:id/logs/:log_id/comments', auth.isAuthenticated(), controller.postLogComment);
