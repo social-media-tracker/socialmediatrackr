@@ -2,7 +2,7 @@ p Dear #{user.name},
 
 p The following Task was posted to your account:
 
-blockquote #{task.message}
+blockquote <b>#{task.cat.name} for #{task.client.name}</b><br />#{task.message}
 
 p.small
   | To un-subscribe from these notifications visit 
