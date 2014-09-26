@@ -118,13 +118,13 @@ exports.create = function(req, res) {
 
         var sendmail_locals = {
           task: task,
-          user: task.provider,
+          user: task.provider
         }
         var sendmail_options = {
           to: task.provider.name + ' <' + task.provider.email + '>',
         }
         
-        sendmail('reply', sendmail_locals, sendmail_options);
+        sendmail('new-task', sendmail_locals, sendmail_options);
         res.json(200, task.data)
 
       } else {
