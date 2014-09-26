@@ -19,7 +19,8 @@ module.exports = function(template_dir, locals, options) {
   var sendmail_options = default_options.sendmail_options;
 
   // set the subject.
-  mail_options.subject = default_options.subjects[template_dir];
+  if (!mail_options.subject) 
+    mail_options.subject = default_options.subjects[template_dir];
 
   // var transport = nodemailer.createTransport(smtpTransport(smtp_options));
   var transport = nodemailer.createTransport(sendmailTransport(sendmail_options));
