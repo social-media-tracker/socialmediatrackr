@@ -21,9 +21,9 @@ angular.module 'meanApp'
       console.log('login success')
       console.log(data)
       $cookieStore.put 'token', data.token
-      # if data.role != 'admin' && data.role != 'provider'
-        # return
-        # return $window.location.href = 'http://www.socialmediatrackr.com/activity'
+      if data.role != 'admin' && data.role != 'provider'
+        return
+        return $window.location.href = 'http://www.socialmediatrackr.com/activity'
       currentUser = User.get()
       deferred.resolve data
       callback?()
@@ -108,9 +108,9 @@ angular.module 'meanApp'
   ###
   isLoggedIn: ->
     if currentUser.hasOwnProperty 'role'
-      # if currentUser.role != 'admin' && currentUser.role != 'provider'
-        # $window.location.href = 'http://www.socialmediatrackr.com/activity'
-        # return false
+      if currentUser.role != 'admin' && currentUser.role != 'provider'
+        $window.location.href = 'http://www.socialmediatrackr.com/activity'
+        return false
       return true
     return false
     
@@ -130,8 +130,8 @@ angular.module 'meanApp'
 
     else
       if (currentUser.hasOwnProperty 'role')
-        # if currentUser.role != 'admin' && currentUser.role != 'provider'
-          # $window.location.href = 'http://www.socialmediatrackr.com/activity'
+        if currentUser.role != 'admin' && currentUser.role != 'provider'
+          $window.location.href = 'http://www.socialmediatrackr.com/activity'
         callback? true
       else 
         callback? false

@@ -32,15 +32,10 @@ angular.module 'meanApp'
       item
 
     uploader.onCompleteItem = (item, res) ->
-      console.log 'onCompleteItem args'
-      console.log arguments
-      console.log 'onCompleteItem res'
-      console.log res
       uploadedAttachmentIds.push res._id
 
 
     uploader.onCompleteAll = ->
-      console.log this
       uploader.clearQueue()
       $scope.ctrl.submittingForm = false
       $scope.ctrl.showMore = false

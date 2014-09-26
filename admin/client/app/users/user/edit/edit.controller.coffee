@@ -1,5 +1,6 @@
 'use strict'
 
 angular.module 'meanApp'
-.controller 'EditCtrl', ($scope) ->
+.controller 'UserEditCtrl', ($scope, $stateParams, Users) ->
+  $scope.user = Users.user $stateParams.id
   $scope.message = 'Hello'

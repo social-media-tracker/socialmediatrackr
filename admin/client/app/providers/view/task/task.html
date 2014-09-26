@@ -7,33 +7,64 @@
     <thead><tr>
       <th>Message</th>
       <th class="center"><i class="fa fa-comments"></i></th>
+      <th class="center"><i class="fa fa-paperclip"></i></th>
     </tr></thead>
     <tbody ng-repeat="l in task.logs|orderBy:'-createdAt'" class="row{{$index%2}}">
       <tr>
         <td><a href ng-click="logClick(l)">{{l.message}}</a></td>
-        <td><a href ng-click="logClick(l)"><i class="fa" ng-class="{'fa-comment-o':!l.comments.length,'fa-comment':l.comments.length}"></i></a></td>
+        <td class="tdcon"><a href ng-click="logClick(l, 'comments')"><i class="fa" ng-class="{'fa-comment-o':!l.comments.length,'fa-comment':l.comments.length}"></i></a></td>
+        <td class="tdcon"><a href ng-click="logClick(l, 'attachments')" ng-show="l.attachments.length"><i class="fa fa-paperclip"></i></a></td>
       </tr>
       <tr ng-show="l.showComments">
-        <td colspan="2">
-          <h4>Comments</h4>
-          <form class="form" role="form" name="commentForm" novalidate ng-submit="submitComment(l)">
-            <div class="row"><div class="col-xs-12">
-            <div class="input-group">
-              <input type="text" class="form-control" ng-model="l.newComment" required>
-              <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i><span class="hidden-xs"> Save</span></button>
-              </span>
-            </div></div></div>
-          </form>
-          <div ng-repeat="c in l.comments|orderBy:'-createdAt'" class="task-log-comment">
-            <div class="row">
-              <div class="col-sm-12">
-                {{c.message}}
-                <br />
-                <small>by {{u(c.user)}} on {{c.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
+        <td colspan="3">
+          <tabset>
+            <tab heading="Comments" active="l.tabs.comments.active">
+              <form class="form" role="form" name="commentForm" novalidate ng-submit="submitComment(l)">
+                <div class="row"><div class="col-xs-12">
+                <div class="input-group">
+                  <input type="text" class="form-control" ng-model="l.newComment" required>
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-save"></i><span class="hidden-xs"> Save</span></button>
+                  </span>
+                </div></div></div>
+              </form>
+              <div ng-repeat="c in l.comments|orderBy:'-createdAt'" class="task-log-comment">
+                <div class="row">
+                  <div class="col-sm-12">
+                    {{c.message}}
+                    <br />
+                    <small>by {{u(c.user)}} on {{c.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </tab>
+
+            <tab heading="Attachments" ng-show="l.attachments.length" active="l.tabs.attachments.active">
+                <table class="table">
+                  <tbody><tr>
+                    <th>Name</th>
+                    <th colspan="3" class="text-center">Actions</th>
+                  </tr></tbody>
+                  <tbody><tr ng-repeat="a in l.attachments">
+                    <td>{{a.name}}</td>
+                    <td class="tdcon">
+                      <a ng-show="a.type=='Image'" ng-click="showAttachmentImage(l, a)" href="">
+                        <i class="fa fa-image"></i>
+                      </a>
+                    </td><td class="tdcon">
+                      <a href="/api/tasks/{{task._id}}/logs/{{l._id}}/attachments/{{a._id}}/download" target="_blank">
+                        <i class="fa fa-download"></i>
+                      </a>
+                    </td><td class="tdcon">
+                      <a href ng-click="deleteAttachment(task._id, l._id, a._id)">
+                        <i class="fa fa-trash-o"></i>
+                      </a>
+                    </td>
+                  </tr></tbody>
+                </table>
+            </tab>
+
+
 
         </td>
       </tr>    

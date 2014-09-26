@@ -5,6 +5,8 @@ var Task = require('./task.model');
 var Template = require('../template/template.model');
 var Cat = require('../category/category.model');
 var async = require('async');
+var path = require('path');
+var fs = require('fs');
 
 // Get list of tasks
 exports.index = function(req, res) {
@@ -166,7 +168,117 @@ exports.postLogComment = function(req, res) {
       }
     }
   });
-}
+};
+
+exports.deleteAttachment = function(req, res) {
+  console.log('loading attachment %s %s %s', req.params.id, req.params.log_id, req.params.attach_id)
+  var task_id = req.params.id;
+  Task.findById(task_id, function(err, task){
+    if(err) { return handleError(res, err); }
+    if(!task) { return res.send(404); }
+    var log_id = req.params.log_id;
+    var attach_id = req.params.attach_id;
+    var logIndex = _.findIndex(task.logs, function(l) {return l._id == log_id});
+    var attachIndex = _.findIndex(task.logs[logIndex].attachments, function(a) {return a._id == attach_id});
+    var attach = task.logs[logIndex].attachments[attachIndex];
+    var file_path = path.join(res.locals.cfg.dirs.attachments, 'tasks', task_id, log_id, attach_id + '.' + attach.ext);
+    fs.unlink(file_path);
+    task.logs[logIndex].attachments.splice(attachIndex, 1)
+    task.save(function(err){
+      if(err) { return handleError(res, err); }
+      res.status(200).send({});
+    });
+
+  });
+};
+
+exports.passthruLogAttachment = function(req, res) {
+  console.log('loading attachment %s %s %s', req.params.id, req.params.log_id, req.params.attach_id)
+  var task_id = req.params.id;
+  Task.findById(task_id, function(err, task){
+    if(err) { return handleError(res, err); }
+    if(!task) { return res.send(404); }
+
+    var log_id = req.params.log_id;
+    var attach_id = req.params.attach_id;
+
+    var logIndex = _.findIndex(task.logs, function(l) {return l._id == log_id});
+    var attachIndex = _.findIndex(task.logs[logIndex].attachments, function(a) {return a._id == attach_id});
+    var attach = task.logs[logIndex].attachments[attachIndex];
+
+    var file_path = path.join(res.locals.cfg.dirs.attachments, 'tasks', task_id, log_id, attach_id + '.' + attach.ext);
+    console.log(file_path);
+    res.sendfile(file_path);
+
+
+  });
+};
+
+exports.uploadLogAttachment = function(req, res) {
+  Task.findById(req.params.id, function(err, task){
+    if(err) { return handleError(res, err); }
+    if(!task) { return res.send(404); }
+
+    req.pipe(req.busboy);
+    req.busboy.on('file', function (fieldname, file, filename) {
+      var ext = path.extname(filename);
+      var name = filename.replace(new RegExp(ext), '');
+      ext = ext.toLowerCase().substr(1);
+      var upload_to = path.join(res.locals.cfg.dirs.attachments, 'tasks');
+      if (!fs.existsSync(upload_to)) fs.mkdirSync(upload_to);
+      upload_to = path.join(upload_to, req.params.id.toString()); // folder for task's attachments
+      if (!fs.existsSync(upload_to)) fs.mkdirSync(upload_to);
+      var attachObj = {
+        name: name,
+        ext: ext
+      };
+
+      switch(ext) {
+        case 'jpg': 
+        case 'png': 
+        case 'gif': 
+        case 'jpeg': 
+          attachObj.type = 'Image';
+          break;
+        default:
+          attachObj.type = 'Other';
+      }
+
+
+      var numLogs = task.logs.length;
+      var logIndex = -1;
+      for (var i = 0; i < numLogs; i++) {
+        if (task.logs[i]._id == req.params.log_id) {
+          logIndex = i;
+          task.logs[i].attachments.push(attachObj);
+          break;
+        }
+      }
+
+
+      if (logIndex === -1) return handleError(res, new Error('Unable to locate work log :' + req.params.log_id))
+      upload_to = path.join(upload_to, task.logs[logIndex]._id.toString());
+      if (!fs.existsSync(upload_to)) fs.mkdirSync(upload_to);
+
+      task.save(function(err) {
+        if(err) { return handleError(res, err); }
+        attachObj = task.logs[logIndex].attachments[task.logs[logIndex].attachments.length-1];
+        var filename = attachObj._id + '.' + attachObj.ext;
+
+        var fstream = fs.createWriteStream(path.join(upload_to, filename));
+        file.pipe(fstream);
+        fstream.on('close', function () {
+          res.status(200).send(attachObj);
+        });
+
+      });
+
+    });
+
+  });
+
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

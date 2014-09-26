@@ -5,4 +5,4 @@ angular.module 'meanApp'
   $stateProvider.state 'users.user.edit',
     url: '/edit'
     templateUrl: 'app/users/user/edit/edit.html'
-    controller: 'EditCtrl'
+    controller: 'UserEditCtrl'

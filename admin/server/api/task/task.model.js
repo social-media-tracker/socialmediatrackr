@@ -14,8 +14,32 @@ var CommentSchema = new Schema({
 
 CommentSchema.plugin(trackable);
 
+var AttachmentSchema = new Schema({
+  name: {type: String, required: true},
+  ext: {type: String, required: true},
+  type: {type: String, required: true, default:'Other'},
+});
+
+
+AttachmentSchema
+  .virtual('full_path')
+  .get(function(){
+    return this.log ?
+      path.join(config.public_config.dirs.attachments, this.log.toString(), this.filename)
+    :
+      path.join(config.public_config.dirs.attachments, 'new', this.uploadKey, this.filename);
+
+  });
+
+AttachmentSchema.pre('remove', function(next){
+  fs.unlink(this.full_path, next);
+});
+
+AttachmentSchema.plugin(trackable);
+
 var LogSchema = new Schema({
   message: {type: String, required: true},
+  attachments: [AttachmentSchema],
   comments: [CommentSchema]
 });
 
