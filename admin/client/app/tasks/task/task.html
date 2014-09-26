@@ -6,6 +6,7 @@
   <h2>Task Detail</h2>
   <div class="well">
     <b>{{task.cat.name}} for {{task.client.name}}</b>
+    <span ng-show="task.completedAt"><br /><em>Completed: {{task.completedAt|date:'MMM d, yyyy @ h:mm a'}}</em></span>
     <p>{{task.message}}</p>
   </div>
   <h3>Add to Work Log</h3>
