@@ -1,13 +1,18 @@
 'use strict';
 
-var _ = require('lodash');
-var Task = require('./task.model');
-var Template = require('../template/template.model');
-var Cat = require('../category/category.model');
-var async = require('async');
-var path = require('path');
-var mime = require('mime');
-var fs = require('fs');
+var _         = require('lodash')
+  , Task      = require('./task.model')
+  , Template  = require('../template/template.model')
+  , Cat       = require('../category/category.model')
+  , async     = require('async')
+  , path      = require('path')
+  , mime      = require('mime')
+  , fs        = require('fs')
+  , S           = require('string')
+  , winston   = require('winston')
+  , config    = require('../../config/environment')
+  , sendmail  = require('../../sendmail')
+;
 
 // Get list of tasks
 exports.index = function(req, res) {
@@ -104,7 +109,28 @@ exports.create = function(req, res) {
   async.series(sync, function(err, results) {
     if (err) return handleError(err);
     Task.findById(newTask._id).populate(['cat','provider','client']).exec(function(err, task){
-      res.json(200, task.data)
+      if (err) return handleError(err);
+
+      // email the provider if they've subscribed to newTaskNotification
+      if (task.provider.provider_subscriptions.newTaskNotification) {
+
+        winston.log('info', 'Sending reply email to %s (%s)', log.user.name, log.user.email);
+
+        var sendmail_locals = {
+          task: task,
+          user: task.provider,
+        }
+        var sendmail_options = {
+          to: task.provider.name + ' <' + task.provider.email + '>',
+        }
+        
+        sendmail('reply', sendmail_locals, sendmail_options);
+        res.json(200, task.data)
+
+      } else {
+        res.json(200, task.data)  
+      }
+      
     });
     
   });
