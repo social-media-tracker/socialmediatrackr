@@ -110,6 +110,7 @@ exports.update = function (req, res, next) {
     name: req.body.name,
     email: req.body.email,
     subscriptions: req.body.subscriptions
+    provider_subscriptions: req.body.provider_subscriptions
   };
   
   User.findByIdAndUpdate(userId, update, function (err, user) {
