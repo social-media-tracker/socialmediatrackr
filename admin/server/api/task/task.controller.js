@@ -1,17 +1,19 @@
 'use strict';
 
-var _         = require('lodash')
-  , Task      = require('./task.model')
-  , Template  = require('../template/template.model')
-  , Cat       = require('../category/category.model')
-  , async     = require('async')
-  , path      = require('path')
-  , mime      = require('mime')
-  , fs        = require('fs')
-  , S           = require('string')
-  , winston   = require('winston')
-  , config    = require('../../config/environment')
-  , sendmail  = require('../../sendmail')
+var _              = require('lodash')
+  , Task           = require('./task.model')
+  , Template       = require('../template/template.model')
+  , Cat            = require('../category/category.model')
+  , async          = require('async')
+  , path           = require('path')
+  , mime           = require('mime')
+  , fs             = require('fs')
+  , S              = require('string')
+  , winston        = require('winston')
+  , config         = require('../../config/environment')
+  , util           = require('util')
+  , sendmail       = require('../../sendmail')
+  , adminSendmail  = require('../../sendmail/admin-sendmail')
 ;
 
 // Get list of tasks
@@ -169,9 +171,29 @@ exports.postLog = function(req, res)  {
     if(err) { return handleError(res, err); }
     if(!task) { return res.send(404); }
     task.logs.push(_.assign(req.body, {user:req.user._id}))
-    task.save(function(err){
+    task.save(function(err) {
       if(err) { return handleError(res, err); }
-      res.json(200, task);
+      var new_log = task.logs[task.logs.length-1];
+
+      Task.findById(req.params.id).populate(['client', 'cat', 'provider']).exec(function(err, task){
+        console.log(util.inspect(task, null, 100))
+        var sendmail_locals = {
+          task: task,
+          log: new_log,
+          user: task.provider,
+          task_link: 'http://admin.socialmediatrackr.com/tasks/' + task._id,
+        };
+        var sendmail_options = {
+          subject: 'SMT - New Work Log Notification on Task #' + task._id,
+        };
+        
+        winston.log('info', 'Sending new task work log email to administrators.');
+        adminSendmail('newTaskLogNotification', 'task-log', sendmail_locals, sendmail_options, function(){
+          res.json(200, task);
+        });
+
+      });
+
     });
   });
 };
@@ -188,7 +210,11 @@ exports.postLogComment = function(req, res) {
 
           for (var j = 0; j<task.logs.length; j++) {
             if (task.logs[j]._id == req.params.log_id) {
-              return res.json(200, task.logs[j].comments.pop());
+              var new_comment = task.logs[j].comments.pop();
+
+              // TODO: email admin or provider, depending on who it's coming from.
+
+              return res.json(200, new_comment);
             }
           }
 

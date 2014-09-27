@@ -18,6 +18,8 @@ var passport = require('passport');
 var session = require('express-session');
 var mongoStore = require('connect-mongo')(session);
 var busboy = require('connect-busboy');
+var winston = require('winston');
+var requestLogger = require('express-winston-middleware').request;
 
 module.exports = function(app) {
   var env = app.get('env');
@@ -45,6 +47,12 @@ module.exports = function(app) {
     }, function () {
       console.log('db connection open' );
     })
+  }));
+
+  app.use(requestLogger({
+    transports: [
+      new (winston.transports.File)({filename: path.normalize(path.join(__dirname, '../logs/winston.log'))})
+    ]
   }));
 
   // make config.public_config avail on locals

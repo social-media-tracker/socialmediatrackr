@@ -1,0 +1,15 @@
+p Dear #{user.name},
+
+p The following activity was posted to the work log:
+
+blockquote #{log.message}
+
+h5 Task Details:
+blockquote <b>#{task.cat.name} for #{task.client.name}</b><br />#{task.message}
+a(href="#{task_link}") View Task
+
+
+p.small
+  | To un-subscribe from these notifications visit 
+  a(href="http://admin.socialmediatrackr.com/settings") your SocialMediaTrackr.com Profile
+  |  and un-check the option to receive "New Task Notifications".  Then hit save.
