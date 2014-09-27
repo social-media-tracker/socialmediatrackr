@@ -106,6 +106,7 @@ angular.module 'meanApp'
     ,
       subscriptions: subs.subscriptions
       provider_subscriptions: subs.provider_subscriptions
+      admin_subscriptions: subs.admin_subscriptions
 
     , (user) ->
       callback? user

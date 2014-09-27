@@ -32,28 +32,65 @@
 
         </div>
 
+        <div class="row">
+          <div ng-show="user.role=='admin'" class="col-md-6">
+            <h3>As an Administrator</h3>
+            <div class="chekcbox">
+              <label>
+                <input type="checkbox" ng-model="user.admin_subscriptions.newClientCommentNotification" /> Client Comment Notifications
+              </label>
+              <p class="help-block">
+                <span ng-show="user.admin_subscriptions.newClientCommentNotification">Send </span>
+                <span ng-hide="user.admin_subscriptions.newClientCommentNotification">Do not send </span>
+                me an email every time a client comments on their activity log. <sup class="text-danger">(not yet implemented)</sup>
+              </p>
+            </div>
+            <div class="chekcbox">
+              <label>
+                <input type="checkbox" ng-model="user.admin_subscriptions.newTaskLogNotification" /> New Task Work Log Notifications
+              </label>
+              <p class="help-block">
+                <span ng-show="user.admin_subscriptions.newTaskLogNotification">Send </span>
+                <span ng-hide="user.admin_subscriptions.newTaskLogNotification">Do not send </span>
+                me an email every time a provider submits a new work log. <sup class="text-danger">(not yet implemented)</sup>
+              </p>
+            </div>
+            <div class="chekcbox">
+              <label>
+                <input type="checkbox" ng-model="user.admin_subscriptions.newTaskCommentNotification" /> New Task Comment Notifications
+              </label>
+              <p class="help-block">
+                <span ng-show="user.admin_subscriptions.newTaskCommentNotification">Send </span>
+                <span ng-hide="user.admin_subscriptions.newTaskCommentNotification">Do not send </span>
+                me an email every time a provider or an other administrator submits a comment to a task work log. <sup class="text-danger">(not yet implemented)</sup>
+              </p>
+            </div>
 
-        <div ng-show="user.role=='user' || user.role=='admin'">
-          <div class="chekcbox">
-            <label>
-              <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
-            </label>
-            <p class="help-block">
-              <span ng-show="user.subscriptions.activityNotification">Send </span>
-              <span ng-hide="user.subscriptions.activityNotification">Do not send </span>
-              me an email every time something is added to the activity log.
-            </p>
           </div>
 
-          <div class="chekcbox">
-            <label>
-              <input type="checkbox" ng-model="user.subscriptions.replyNotifications" /> Reply Notifications
-            </label>
-            <p class="help-block">
-              <span ng-show="user.subscriptions.replyNotifications">Send </span>
-              <span ng-hide="user.subscriptions.replyNotifications">Do not send </span>
-              me an email every time an administrator replies to something on the activity log.
-            </p>
+          <div ng-show="user.role=='user' || user.role=='admin'" ng-class="{'col-md-6':user.role=='admin','col-md-12':user.role=='user'}">
+            <h3 ng-show="user.role==='admin'">As a Client</h3>
+            <div class="chekcbox">
+              <label>
+                <input type="checkbox" ng-model="user.subscriptions.activityNotification" /> Activity Notifications
+              </label>
+              <p class="help-block">
+                <span ng-show="user.subscriptions.activityNotification">Send </span>
+                <span ng-hide="user.subscriptions.activityNotification">Do not send </span>
+                me an email every time something is added to the activity log.
+              </p>
+            </div>
+
+            <div class="chekcbox">
+              <label>
+                <input type="checkbox" ng-model="user.subscriptions.replyNotifications" /> Reply Notifications
+              </label>
+              <p class="help-block">
+                <span ng-show="user.subscriptions.replyNotifications">Send </span>
+                <span ng-hide="user.subscriptions.replyNotifications">Do not send </span>
+                me an email every time an administrator replies to something on the activity log.
+              </p>
+            </div>
           </div>
         </div>
 

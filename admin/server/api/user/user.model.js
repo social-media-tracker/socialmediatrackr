@@ -22,6 +22,7 @@ var UserSchema = new Schema({
   github: {},
   subscriptions: {}, // stores what emails they want to receive.
   provider_subscriptions: {}, // stores what emails they want to receive.
+  admin_subscriptions: {}, // stores what emails they want to receive.
   provider_clients: [{type:Number, ref:'User'}]
 });
 
@@ -49,12 +50,15 @@ UserSchema
 UserSchema
   .virtual('profile')
   .get(function() {
-    return {
+    var o = {
       'name': this.name,
       'role': this.role,
       'subscriptions': this.subscriptions,
-      'provider_subscriptions': this.provider_subscriptions
     };
+    if (this.role == 'provider') o.provider_subscriptions = this.provider_subscriptions;
+    if (this.role == 'admin') o.admin_subscriptions = this.admin_subscriptions;
+    return o;
+
   });
 
 // Non-sensitive info we'll be putting in the token

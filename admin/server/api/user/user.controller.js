@@ -111,6 +111,7 @@ exports.update = function (req, res, next) {
     email: req.body.email,
     subscriptions: req.body.subscriptions,
     provider_subscriptions: req.body.provider_subscriptions,
+    admin_subscriptions: req.body.admin_subscriptions,
   };
   
   User.findByIdAndUpdate(userId, update, function (err, user) {
@@ -193,6 +194,7 @@ exports.changeSubscriptions = function(req, res, next) {
 
     user.subscriptions = subs.subscriptions;
     user.provider_subscriptions = subs.provider_subscriptions;
+    user.admin_subscriptions = subs.admin_subscriptions;
 
     user.save(function(err){
       if (err) return validationError(res, err);
