@@ -1,22 +1,25 @@
 .right-pills {
-  margin-top: 6px;
-  background-color: #ffff !important;
-  border: 3px solid #87C4F8;
+  background-color: #fff !important;
+  border: 3px solid #87c4f8;
   border-radius: 12px;
+  margin-top: 6px;
   padding: 8px;
 }
 
 .td-checkbox {
   height: auto;
-  width: auto;
   margin: 0;
   padding-bottom: 0;
+  width: auto;
+
   label {
-    width: auto;
     margin: 0;
     padding-bottom: 0;
+    width: auto;
   }
+
 }
+
 .clickable {
   cursor: pointer;
 }

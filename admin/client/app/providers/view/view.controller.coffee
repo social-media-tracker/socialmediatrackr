@@ -7,10 +7,10 @@ angular.module 'meanApp'
   '$stateParams'
   'user' # resolved by route
   'ProviderStor' #special "provider selected" service
-  'Task' # Tasks API 
-  'Cat' # Categories API 
-  'Template' # Templates API 
-  'User' # User API 
+  'Task' # Tasks API
+  'Cat' # Categories API
+  'Template' # Templates API
+  'User' # User API
   ($scope, $state, $stateParams, user, ProviderStor, Task, Cat, Template, User) ->
 
     $scope.id = $stateParams.id
@@ -20,11 +20,15 @@ angular.module 'meanApp'
     ProviderStor.provider = user
     $scope.$state = $state
 
-    $scope.clients = User.ids({ids:ProviderStor.provider.provider_clients.join(',')})
+    $scope.clients = User.ids({
+      ids : ProviderStor.provider.provider_clients.join(',')
+    })
 
     $scope.$watch 'user.provider_clients.length', (cc) ->
       console.log '$watch fired: user.provider_clients', cc
-      $scope.clients = User.ids({ids:ProviderStor.provider.provider_clients.join(',')})
+      $scope.clients = User.ids({
+        ids : ProviderStor.provider.provider_clients.join(',')
+      })
 
     $scope.filters = {
       client: {_id: 0},
@@ -53,16 +57,8 @@ angular.module 'meanApp'
       getTasks();
 
     $scope.cats = Cat.tasks()
-    # Cat.tasks (res) ->
-    #   d = []
-    #   for r in res
-    #     d.push {id:r._id,name:r.name}
-
-    #   console.log res
-    #   $scope.cats = res
-    
     $scope.templates = Template.tasks()
-    $scope.ctrl = 
+    $scope.ctrl =
       showTaskForm: false
       editing: false
       usingTemplateTask: false
@@ -80,7 +76,7 @@ angular.module 'meanApp'
     resetTaskForm()
 
     $scope.isActive = (subView) ->
-      path = 'providers.view';
+      path = 'providers.view'
       path += '.' + subView unless subView == ''
       $state.is(path)
 
@@ -94,7 +90,7 @@ angular.module 'meanApp'
       if $scope.ctrl.editing
         $scope.ctrl.editing = false
         resetTaskForm()
-      else if $scope.ctrl.showTaskForm 
+      else if $scope.ctrl.showTaskForm
         return $scope.ctrl.showTaskForm = false
       $scope.ctrl.showTaskForm = true
 
@@ -137,13 +133,12 @@ angular.module 'meanApp'
           t.savingCompleted = false
 
     $scope.deleteTask = (task) ->
-      if confirm 'Are you sure you want to delete this task?  All replies will be delete with it.\n\nThis operation can not be undone.'
+      confmsg = 'Are you sure you want to delete this task?'
+      confmsg += 'All replies will be delete with it.\n\n'
+      confmsg += 'This operation can not be undone.'
+      if confirm confmsg
         Task.delete {id:task._id}, (res) ->
           tt = $scope.tasks.filter (t) ->
             return if t._id == task._id then false else t
           $scope.tasks = tt
-
-
-
-
 ]

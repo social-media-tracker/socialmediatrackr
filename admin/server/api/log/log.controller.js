@@ -1,21 +1,28 @@
 'use strict';
 
-var mongoose    = require('mongoose')
-  , ObjectId    = mongoose.Schema.Types.ObjectId
-  , _           = require('lodash')
-  , Log         = require('./log.model')
-  , User        = require('./log.model')
-  , moment      = require('moment')
-  , paginate    = require('node-paginate-anything')
-  , fs          = require('fs')
-  , path        = require('path')
-  , Attachment  = require('../attachment/attachment.model')
-  , S           = require('string')
-  , winston     = require('winston')
-  , config      = require('../../config/environment')
-  , sendmail    = require('../../sendmail')
-;
+var mongoose    = require('mongoose');
+var ObjectId    = mongoose.Schema.Types.ObjectId;
+var _           = require('lodash');
+var Log         = require('./log.model');
+var User        = require('./log.model');
+var moment      = require('moment');
+var paginate    = require('node-paginate-anything');
+var fs          = require('fs');
+var path        = require('path');
+var Attachment  = require('../attachment/attachment.model');
+var S           = require('string');
+var winston     = require('winston');
+var config      = require('../../config/environment');
+var sendmail    = require('../../sendmail');
 
+function handleError(res, err, additional_detail) {
+  if (additional_detail) {
+    winston.log('error', additional_detail + ' :: ' + err.toString());
+  } else {
+    winston.log('error', err.toString());
+  }
+  return res.send(500, err);
+}
 
 function uploadAttachment(file, upload_to, filename, attachObj, res, log){
   winston.log('info','Uploading %s to %s', filename, upload_to);
@@ -31,7 +38,7 @@ function uploadAttachment(file, upload_to, filename, attachObj, res, log){
 
     // file has been written, lets create the database record for it.
     Attachment.create(attachObj, function(err, doc){
-      if (err) return handlError(res, err, 'Unable to create attachment record in the db');
+      if (err) return handleError(res, err, 'Unable to create attachment record in the db');
       winston.log('info','File Upload %s/%s complete.', upload_to, filename);
       if (log) {
         log.attachments = log.attachments || [];
@@ -254,12 +261,3 @@ exports.reply = function(req, res) {
     });
   });
 };
-
-function handleError(res, err, additional_detail) {
-  if (additional_detail) {
-    winston.log('error', additional_detail + ' :: ' + err.toString());
-  } else {
-    winston.log('error', err.toString());
-  }
-  return res.send(500, err);
-}

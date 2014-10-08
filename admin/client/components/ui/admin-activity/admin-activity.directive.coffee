@@ -9,8 +9,9 @@ angular.module 'meanApp'
     dateTimeFormat: '@'
   }
 
-  controller: ($scope, $filter, $http, $timeout, $attrs, FileUploader, Auth, Lightbox) -> 
-    $scope.ctrl = 
+  controller: ($scope, $filter, $http, $timeout, \
+      $attrs, FileUploader, Auth, Lightbox) ->
+    $scope.ctrl =
       submittingForm: false
       showMore: false
     $scope.user = Auth.getCurrentUser()
@@ -20,7 +21,7 @@ angular.module 'meanApp'
     newLogWaitingOnAttachments = false
 
     uploadedAttachmentIds = []
-    uploader = new FileUploader 
+    uploader = new FileUploader
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
       formData: []
@@ -43,14 +44,14 @@ angular.module 'meanApp'
         newLogWaitingOnAttachments.attachments = uploadedAttachmentIds
         $scope.logs.push newLogWaitingOnAttachments
         newLogWaitingOnAttachments = false
-        $scope.newLog = getNewLog();
+        $scope.newLog = getNewLog()
         uploadedAttachmentIds = []
       else
         uploadedAttachmentIds = []
 
     $scope.uploader = uploader
 
-    instaUploader = new FileUploader 
+    instaUploader = new FileUploader
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
       formData: []
@@ -75,7 +76,7 @@ angular.module 'meanApp'
     # console.log $scope.user
     $scope.users = []
 
-    $scope.filter = 
+    $scope.filter =
       apiURL: '/api/logs?user=0'
       perPage: 20
       user: $scope.userId
@@ -91,7 +92,7 @@ angular.module 'meanApp'
       d = new Date()
       return {message:'',createdAt:d,tz_offset:d.getTimezoneOffset()}
 
-    #delay setting up the watches for a short time to let the compiler fill in data
+    #delay the watches for a short time to let the compiler fill in data
     $scope.newLog = getNewLog()
     $timeout ->
 
@@ -150,7 +151,7 @@ angular.module 'meanApp'
             $scope.newLog = getNewLog()
 
     $scope.toggleReplies = (log) ->
-      return log.showReplies = false if (log.showReplies) 
+      return log.showReplies = false if (log.showReplies)
       for l in $scope.logs
         l.showAttachments = false
         l.showReplies = false
@@ -172,7 +173,7 @@ angular.module 'meanApp'
 
       
     $scope.toggleAttachments = (log) ->
-      return log.showAttachments = false if (log.showAttachments) 
+      return log.showAttachments = false if (log.showAttachments)
 
       for l in $scope.logs
         l.showAttachments = false
@@ -186,10 +187,11 @@ angular.module 'meanApp'
         log.images = log.images || []
         for a in res.data
           if a.type == 'Image'
-              log.images.push
-                _id: a._id
-                url: '/api/attachments/' + a._id + '/passthru'
-                caption: a.name
+            log.images.push
+              _id: a._id
+              url: '/api/attachments/' + a._id + '/passthru'
+              caption: a.name
+            
         log.attachmentsLoaded = true
     
     $scope.beforeSaveAttachmentName = (data, id) ->
