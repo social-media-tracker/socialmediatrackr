@@ -11,3 +11,5 @@ dist
 meteor*
 */server/sendmail/logs/*
 smt/
+*/npm-debug.log
+
