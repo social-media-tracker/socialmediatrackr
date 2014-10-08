@@ -9,12 +9,25 @@ angular.module 'meanApp'
     dateTimeFormat: '@'
   }
 
-  controller: ($scope, $filter, $http, $timeout, \
+  controller: ($scope, $filter, $http, $timeout, Activity, \
       $attrs, FileUploader, Auth, Lightbox) ->
+    $scope.loading = true
     $scope.ctrl =
       submittingForm: false
       showMore: false
     $scope.user = Auth.getCurrentUser()
+    $scope.total_items = 0
+
+    # console.log $scope.user
+    $scope.users = []
+
+    $scope.filter =
+      page: 1
+      limit: 10
+      user: $scope.userId
+
+    if $scope.userId
+      $scope.filter.user = $scope.userId
 
     # when uploading files during new item submit:
     uploadingFromSubmit = false
@@ -25,6 +38,26 @@ angular.module 'meanApp'
       url: '/api/logs/upload'
       headers: Authorization: 'Bearer ' + Auth.getToken()
       formData: []
+
+    getLogs = ->
+      return unless $scope.filter.user
+      $scope.ctrl.loading = true
+      console.log('getting logs', $scope.filter)
+      $http.get('/api/logs', {params:$scope.filter})
+      .success (res) ->
+        $scope.total_items = res.total
+        $scope.logs = res.data
+        $scope.ctrl.loading = false
+
+    $scope.getFilters = ->
+      $scope.filter
+
+    $scope.getTotalItems = ->
+      $scope.total_items
+
+    $scope.setPage = (page) ->
+      console.log 'setting page', page
+      $scope.filter.page = page
 
     uploader.onBeforeUploadItem = (item) ->
       console.log item
@@ -72,21 +105,6 @@ angular.module 'meanApp'
           l.attachments.push res
 
     $scope.instaUploader = instaUploader
-  
-    # console.log $scope.user
-    $scope.users = []
-
-    $scope.filter =
-      apiURL: '/api/logs?user=0'
-      perPage: 20
-      user: $scope.userId
-
-
-    $scope.loading = true
-    if $scope.userId
-      $scope.filter.user = $scope.userId
-    else
-      $scope.filter.user = -1
 
     getNewLog = ->
       d = new Date()
@@ -98,15 +116,14 @@ angular.module 'meanApp'
 
       $scope.$watch 'userId', (u) ->
         if u
-          $scope.filter.apiURL = '/api/logs?user=' + u
           $scope.filter.user = u
-        else
-          $scope.filter.apiURL = '/api/logs?user=-1'
-          $scope.filter.user = -1
 
       $scope.$watch 'logs.length', (len) ->
         $scope.loading = false
-
+      $scope.$watch 'filter', (f) ->
+        console.log '$watch filter', f
+        getLogs()
+      , true
     , 100
 
 

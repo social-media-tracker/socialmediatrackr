@@ -6,7 +6,6 @@ var _           = require('lodash');
 var Log         = require('./log.model');
 var User        = require('./log.model');
 var moment      = require('moment');
-var paginate    = require('node-paginate-anything');
 var fs          = require('fs');
 var path        = require('path');
 var Attachment  = require('../attachment/attachment.model');
@@ -91,6 +90,11 @@ exports.upload = function(req, res) {
 exports.index = function(req, res) {
   winston.log('info','GET /api/logs');
 
+  var limit = parseInt(req.query.limit) || 10;
+  var page = parseInt(req.query.page) || 1;
+
+  var skip = (page - 1) * limit;
+
   var query, total_items, count_query;
 
   // admin user
@@ -112,21 +116,18 @@ exports.index = function(req, res) {
       if (err) { return handleError(res, err); }
       if (!total_items) { return res.json(200, [])}
 
-      var queryParameters = paginate(req, res, total_items, 100);
-
-      if (!queryParameters) { return res.json(500, {
-        error: 'Error Creating Query Parameters',
-        total_items: total_items
-      }); }
-
       query.sort('-createdAt')
         .populate('user')
         .populate('replies.user')
-        .limit(queryParameters.limit)
-        .skip(queryParameters.skip)
+        .limit(limit)
+        .skip(skip)
         .exec(function (err, logs) {
           if(err) { return handleError(res, err); }
-          return res.send(200, logs);
+          var o = {
+            total: total_items,
+            data: logs,
+          };
+          return res.send(200, o);
         });
     })
 
@@ -138,13 +139,16 @@ exports.index = function(req, res) {
       if (err) { return handleError(res, err); }
       if (!total_items) { return res.json(200, [])}
 
-      var queryParameters = paginate(req, res, total_items, 100);
       query.sort('-createdAt')
-        .limit(queryParameters.limit)
-        .skip(queryParameters.skip)
+        .limit(limit)
+        .skip(skip)
         .exec(function (err, logs) {
           if(err) { return handleError(res, err); }
-          return res.send(200, logs);
+          var o = {
+            total: total_items,
+            data: logs,
+          };
+          return res.send(200, o);
         });
 
     });

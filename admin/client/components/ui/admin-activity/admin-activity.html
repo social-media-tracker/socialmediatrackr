@@ -44,7 +44,7 @@
     </form>
 
 
-    <h3>Activity Feed</h3>
+    <h3>Activity Feed <small ng-show="logs.length">{{total_items}} total</small></h3>
     <p ng-hide="logs.length">
       There is no activity to display.
     </p>
@@ -163,13 +163,10 @@
         </tbody>
       </table>
 
-    <bgf-pagination
-      collection="logs"
-      url="filter.apiURL"
-      per-page="filter.perPage"
-      auto-presets="false"
-      per-page-presets="[10,20,50,100]"
-      template-url="/assets/paginate-anything.html">
-    </bgf-pagination>
+    <paginate
+      filter="getFilters()"
+      total="getTotalItems()"
+      setPage="setPage">
+    </paginate>
   </div>
 </div>
