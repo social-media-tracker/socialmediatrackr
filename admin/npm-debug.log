@@ -1,0 +1,58 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/thom/.nvm/v0.10.31/bin/node',
+1 verbose cli   '/home/thom/.nvm/v0.10.31/bin/npm',
+1 verbose cli   'i',
+1 verbose cli   'node-paginate-anything' ]
+2 info using npm@1.4.23
+3 info using node@v0.10.31
+4 verbose readDependencies using package.json deps
+5 verbose cache add [ 'node-paginate-anything@3.1.0', null ]
+6 verbose cache add name=undefined spec="node-paginate-anything@3.1.0" args=["node-paginate-anything@3.1.0",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'node-paginate-anything@3.1.0',
+7 verbose parsed url   path: 'node-paginate-anything@3.1.0',
+7 verbose parsed url   href: 'node-paginate-anything@3.1.0' }
+8 verbose cache add name="node-paginate-anything" spec="3.1.0" args=["node-paginate-anything","3.1.0"]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: '3.1.0',
+9 verbose parsed url   path: '3.1.0',
+9 verbose parsed url   href: '3.1.0' }
+10 verbose addNamed [ 'node-paginate-anything', '3.1.0' ]
+11 verbose addNamed [ '3.1.0', '3.1.0' ]
+12 silly lockFile 28fb8871-node-paginate-anything-3-1-0 node-paginate-anything@3.1.0
+13 verbose lock node-paginate-anything@3.1.0 /home/thom/.npm/28fb8871-node-paginate-anything-3-1-0.lock
+14 verbose registry.get https://registry.npmjs.org/node-paginate-anything not expired, no request
+15 silly lockFile 28fb8871-node-paginate-anything-3-1-0 node-paginate-anything@3.1.0
+16 silly lockFile 28fb8871-node-paginate-anything-3-1-0 node-paginate-anything@3.1.0
+17 error Error: version not found: node-paginate-anything@3.1.0
+17 error     at /home/thom/.nvm/v0.10.31/lib/node_modules/npm/lib/cache/add-named.js:125:12
+17 error     at RegClient.get_ (/home/thom/.nvm/v0.10.31/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:130:14)
+17 error     at RegClient.<anonymous> (/home/thom/.nvm/v0.10.31/lib/node_modules/npm/node_modules/npm-registry-client/lib/get.js:49:12)
+17 error     at evalmachine.<anonymous>:271:14
+17 error     at /home/thom/.nvm/v0.10.31/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:102:5
+17 error     at Object.oncomplete (evalmachine.<anonymous>:107:15)
+18 error If you need help, you may report this *entire* log,
+18 error including the npm and node versions, at:
+18 error     <http://github.com/npm/npm/issues>
+19 error System Linux 3.13.0-36-generic
+20 error command "/home/thom/.nvm/v0.10.31/bin/node" "/home/thom/.nvm/v0.10.31/bin/npm" "i" "node-paginate-anything"
+21 error cwd /home/thom/projects/smt/admin
+22 error node -v v0.10.31
+23 error npm -v 1.4.23
+24 verbose exit [ 1, true ]

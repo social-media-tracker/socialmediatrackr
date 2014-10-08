@@ -15,7 +15,7 @@
     "font-awesome": ">=4.1.0",
     "lodash": "~2.4.1",
     "angular-ui-router": "~0.2.11",
-    "angular-paginate-anything": "~2.5.4",
+    "angular-paginate-anything": "~3.1.0",
     "angular-file-upload": "~1.1.1",
     "angular-xeditable": "~0.1.8",
     "angular-bootstrap-lightbox": "~0.2.3",
@@ -27,6 +27,8 @@
     "angular-scenario": ">=1.2.*"
   },
   "resolutions": {
-    "angular": "^1.2.22"
+    "angular": "^1.2.22",
+    "es5-shim": ">=3.4.0",
+    "bootstrap": "^3.2.0"
   }
 }

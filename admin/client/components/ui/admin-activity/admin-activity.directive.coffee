@@ -76,7 +76,7 @@ angular.module 'meanApp'
     $scope.users = []
 
     $scope.filter = 
-      apiURL: '/api/logs?user=-1'
+      apiURL: '/api/logs?user=0'
       perPage: 20
       user: $scope.userId
 

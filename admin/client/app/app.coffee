@@ -6,7 +6,7 @@ angular.module 'meanApp', [
   'ngSanitize'
   'ui.router'
   'ui.bootstrap'
-  'begriffs.paginate-anything'
+  'bgf.paginateAnything'
   'angularFileUpload'
   'xeditable'
   'bootstrapLightbox'
