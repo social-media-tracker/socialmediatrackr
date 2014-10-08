@@ -6,17 +6,19 @@
   <table class="table">
     <thead><tr>
       <th>Message</th>
-      <th class="center"><i class="fa fa-comments"></i></th>
-      <th class="center"><i class="fa fa-paperclip"></i></th>
+      <th class="text-center" width="120">Posted</th>
+      <th class="text-center"><i class="fa fa-comments"></i></th>
+      <th class="text-center"><i class="fa fa-paperclip"></i></th>
     </tr></thead>
     <tbody ng-repeat="l in task.logs|orderBy:'-createdAt'" class="row{{$index%2}}">
       <tr>
         <td><a href ng-click="logClick(l)">{{l.message}}</a></td>
+        <td class="text-center" am-time-ago="l.createdAt" /></td>
         <td class="tdcon"><a href ng-click="logClick(l, 'comments')"><i class="fa" ng-class="{'fa-comment-o':!l.comments.length,'fa-comment':l.comments.length}"></i></a></td>
         <td class="tdcon"><a href ng-click="logClick(l, 'attachments')" ng-show="l.attachments.length"><i class="fa fa-paperclip"></i></a></td>
       </tr>
       <tr ng-show="l.showComments">
-        <td colspan="3">
+        <td colspan="4">
           <tabset>
             <tab heading="Comments" active="l.tabs.comments.active">
               <form class="form" role="form" name="commentForm" novalidate ng-submit="submitComment(l)">
@@ -33,7 +35,7 @@
                   <div class="col-sm-12">
                     {{c.message}}
                     <br />
-                    <small>by {{u(c.user)}} on {{c.createdAt | date:'MMM d, yyyy @ h:mm a'}}</small>
+                    <small>by {{u(c.user)}} <span am-time-ago="c.createdAt"></span></small>
                   </div>
                 </div>
               </div>

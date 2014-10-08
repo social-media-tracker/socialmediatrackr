@@ -8,6 +8,7 @@ angular.module 'meanApp', [
   'ui.bootstrap'
   'bgf.paginateAnything'
   'angularFileUpload'
+  'angularMoment'
   'xeditable'
   'bootstrapLightbox'
   'ui.utils'
