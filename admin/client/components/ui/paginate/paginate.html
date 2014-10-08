@@ -1,0 +1,24 @@
+<ul class="pagination" ng-show="numPages > 1">
+
+  <li ng-class="{disabled:filter.page==1}">
+    <a href ng-click="p(1)" ng-disabled="filter.page=='1'">&lt;&lt;</a>
+  </li>
+
+  <li ng-class="{disabled:filter.page==1}">
+    <a href ng-click="p(prevPage)" ng-disabled="filter.page=='1'">&lt;</a>
+  </li>
+
+  <li ng-repeat="page in pages" ng-class="{active:page==filter.page}">
+    <a href ng-click="p(page)" ng-disabled="page==filter.page">{{page}}</a>
+  </li>
+
+  <li ng-class="{disabled:filter.page==numPages}">
+    <a href ng-click="p(nextPage)">&gt;</a>
+  </li>
+  <li ng-class="{disabled:filter.page==numPages}">
+    <a href ng-click="p(numPages)">&gt;&gt;</a>
+  </li>
+</ul>
+<p ng-show="total > 10">
+  <b>Set Per Page:</b> <select ng-options="opt for opt in [10,20,50,100]" ng-model="filter.limit"></select>
+</p>
