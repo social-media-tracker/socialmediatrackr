@@ -13,7 +13,8 @@ angular.module 'meanApp', [
   'bootstrapLightbox'
   'ui.utils'
 ]
-.config ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) ->
+.config ($stateProvider, $urlRouterProvider, $locationProvider, \
+$httpProvider) ->
   $urlRouterProvider
   .otherwise '/'
 
@@ -24,7 +25,8 @@ angular.module 'meanApp', [
   # Add authorization token to headers
   request: (config) ->
     config.headers = config.headers or {}
-    config.headers.Authorization = 'Bearer ' + $cookieStore.get 'token' if $cookieStore.get 'token'
+    if $cookieStore.get 'token'
+      config.headers.Authorization = 'Bearer ' + $cookieStore.get 'token'
     config
 
   # Intercept 401s and redirect you to login
