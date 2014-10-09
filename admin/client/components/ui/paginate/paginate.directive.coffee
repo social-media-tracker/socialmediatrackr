@@ -21,8 +21,8 @@ angular.module 'meanApp'
       console.log '$scope.filter after p set', $scope.filter
 
     #prev page
-    $scope.pp = ->
-      $scope.filter.page += 1
+    $scope.setPP =  ->
+      $scope.filter.page = 1
 
     #last page
     $scope.lp = ->

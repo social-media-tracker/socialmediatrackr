@@ -20,5 +20,5 @@
   </li>
 </ul>
 <p ng-show="total > 10">
-  <b>Set Per Page:</b> <select ng-options="opt for opt in [10,20,50,100]" ng-model="filter.limit"></select>
+  <b>Set Per Page:</b> <select ng-options="opt for opt in [10,20,50,100]" ng-change="setPP()" ng-model="filter.limit"></select>
 </p>
