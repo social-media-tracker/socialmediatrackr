@@ -16,9 +16,8 @@ angular.module 'meanApp'
       $scope.users.splice i, 1 if u is user
 
   $scope.selectUser = (user) ->
-  	# $rootScope.selectedUser = user._id
-  	$state.go 'users.user.activity', id: user._id
+    window.scrollTo 0,0
+    $state.go 'users.user.activity', id: user._id
 
   $scope.isSelected = (user) ->
   	user._id is $rootScope.selectedUser
-  	
