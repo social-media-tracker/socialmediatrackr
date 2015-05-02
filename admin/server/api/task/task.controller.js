@@ -38,7 +38,7 @@ exports.index = function(req, res) {
     var total_items = count;
     var queryParameters = paginate(req, res, total_items, 50);
 
-    Task.find(q).limit(queryParameters.limit).skip(queryParameters.skip).populate(['provider','cat','client']).exec(function (err, tasks) {
+    Task.find(q).sort('-createdAt').limit(queryParameters.limit).skip(queryParameters.skip).populate(['provider','cat','client']).exec(function (err, tasks) {
       if(err) { return handleError(res, err); }
       return res.json(200, tasks.map(function(t){return t.data}));
     });
