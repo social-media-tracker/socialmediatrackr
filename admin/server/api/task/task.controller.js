@@ -32,9 +32,16 @@ exports.index = function(req, res) {
     q.cat = req.query.cat;
   }
 
-  Task.find(q).populate(['provider','cat','client']).exec(function (err, tasks) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, tasks.map(function(t){return t.data}));
+  Task.count(q, function(err, count) {
+
+    var paginate = require('node-paginate-anything');
+    var total_items = count;
+    var queryParameters = paginate(req, res, total_items, 50);
+
+    Task.find(q).limit(queryParameters.limit).skip(queryParameters.skip).populate(['provider','cat','client']).exec(function (err, tasks) {
+      if(err) { return handleError(res, err); }
+      return res.json(200, tasks.map(function(t){return t.data}));
+    });
   });
 };
 
@@ -88,7 +95,7 @@ exports.create = function(req, res) {
         req.body.cat = cat._id
         next(null, cat)
       }); // Cat.create
-    }); // sync.push 
+    }); // sync.push
   }
 
   sync.push(function(next){
@@ -106,7 +113,7 @@ exports.create = function(req, res) {
           next(null, task);
       }
     }); //Task.create()
-  }); //sync.push 
+  }); //sync.push
 
   async.series(sync, function(err, results) {
     if (err) return handleError(err);
@@ -126,18 +133,18 @@ exports.create = function(req, res) {
           subject: 'SocialMediaTrackr.com New Task Notification (#' + task._id + ')',
           to: task.provider.name + ' <' + task.provider.email + '>',
         }
-        
+
         sendmail('new-task', sendmail_locals, sendmail_options);
         res.json(200, task.data)
 
       } else {
-        res.json(200, task.data)  
+        res.json(200, task.data)
       }
-      
+
     });
-    
+
   });
-}; 
+};
 
 // Updates an existing task in the DB.
 exports.update = function(req, res) {
@@ -186,7 +193,7 @@ exports.postLog = function(req, res)  {
         var sendmail_options = {
           subject: 'SMT - New Work Log Notification on Task #' + task._id,
         };
-        
+
         winston.log('info', 'Sending new task work log email to administrators.');
         adminSendmail('newTaskLogNotification', 'task-log', sendmail_locals, sendmail_options, function(){
           res.json(200, task);
@@ -311,10 +318,10 @@ exports.uploadLogAttachment = function(req, res) {
       };
 
       switch(ext) {
-        case 'jpg': 
-        case 'png': 
-        case 'gif': 
-        case 'jpeg': 
+        case 'jpg':
+        case 'png':
+        case 'gif':
+        case 'jpeg':
           attachObj.type = 'Image';
           break;
         default:

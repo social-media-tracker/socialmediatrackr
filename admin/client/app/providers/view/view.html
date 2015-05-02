@@ -56,7 +56,7 @@
             <div ng-class="{'col-sm-4':ctrl.selectedCatId,'col-sm-5':!ctrl.selectedCatId}">
               <input id="taskCat" type="text" ng-model="task.cat" class="form-control"
                      placeholder="Task Category"
-                     typeahead="c.name for c in cats | filter:$viewValue | limitTo:8" 
+                     typeahead="c.name for c in cats | filter:$viewValue | limitTo:8"
                      typeahead-on-select="catSelected($item)"
                      ng-disabled="ctrl.selectedCatId">
             </div>
@@ -74,7 +74,7 @@
             <div ng-class="{'col-sm-11':ctrl.usingTemplateTask,'col-sm-12':!ctrl.usingTemplateTask}">
               <input id="taskMsg" type="text" ng-model="task.message" class="form-control"
                      placeholder="Start typing to search task templates..."
-                     typeahead="t.message for t in templates | filter:$viewValue | limitTo:8" 
+                     typeahead="t.message for t in templates | filter:$viewValue | limitTo:8"
                      typeahead-on-select="taskSelected($item)"
                      ng-disabled="ctrl.usingTemplateTask">
             </div>
@@ -125,6 +125,16 @@
             <td class="text-center"><a ng-click="deleteTask(t)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a></td>
           </tr></tbody>
         </table>
+
+        <bgf-pagination
+          collection="tasks"
+          url="apiURL"
+          url-params="{'client':{'_id':0}, 'provider':user._id}"
+          per-page="10"
+          auto-presets="false"
+          per-page-presets="[10,20,50,100]"
+          template-url="/assets/paginate-anything.html">
+        </bgf-pagination>
 
       </div>
     </div>
