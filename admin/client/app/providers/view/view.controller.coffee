@@ -14,6 +14,7 @@ angular.module 'meanApp'
   ($scope, $state, $stateParams, user, ProviderStor, Task, Cat, Template, User) ->
 
     $scope.id = $stateParams.id
+    $scope.apiURL = '/api/tasks'
     console.log 'ViewProviderCtrl'
     console.log 'user', user
     $scope.user = user
